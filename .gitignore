@@ -9,10 +9,16 @@ dist/
 web-build/
 expo-env.d.ts
 
+# build and tool caches
+coverage/
+.cache/
+.turbo/
+
 # Native
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
@@ -25,13 +31,19 @@ expo-env.d.ts
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+pnpm-debug.*
+bun-debug.*
+*.log
 
 # macOS
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local environment files and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
 
 # typescript
 *.tsbuildinfo
@@ -45,3 +57,6 @@ example
 #LLM
 AGENTS.md
 .claude/
+
+.vscode/
+.idea/
