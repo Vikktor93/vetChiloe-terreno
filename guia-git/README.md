@@ -1,9 +1,9 @@
-# Guía Git · vetChiloé Terreno
+# Guía Git - vetChiloé en Terreno
 
-Tecnología Web y Móvil · Unidad II
-Victor Saldivia Vera · victor.saldivia@ulagos.cl
+Tecnología Web y Móvil - Unidad II  
+Victor Saldivia Vera - victor.saldivia@ulagos.cl
 
-Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **vetChiloé Terreno**.
+Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **vetChiloé en Terreno**.
 
 | Archivo | Para quién | Qué contiene |
 |---|---|---|
@@ -15,22 +15,33 @@ Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **v
 
 ## La idea en una imagen
 
+**Las ramas del repositorio:** todas nacen de `main`, y cada una avanza por separado.
+
+```mermaid
+gitGraph
+  commit id: "Plantilla base"
+  branch estudiante/maria-perez
+  commit id: "María - Avance 01"
+  commit id: "María ·- Avance 02"
+  checkout main
+  branch estudiante/juan-soto
+  commit id: "Juan - Avance 01"
+  checkout main
+  branch docente/solucion
+  commit id: "Solución 01"
+  checkout main
+  commit id: "Base: actualización"
 ```
-                         GitHub · Vikktor93/vetchiloe-terreno
- ┌────────────────────────────────────────────────────────────────────────┐
- │                                                                        │
- │  main ●──────────────●──────────────────────────────●──────▶           │
- │       │ plantilla    │ (solo el docente la         │                  │
- │       │ base         │  actualiza)                  │                  │
- │       │                                             │                  │
- │       ├─▶ estudiante/maria-perez   ●──●──●──●  ── PR borrador ──┐      │
- │       │                         Avance 01  02                   │      │
- │       ├─▶ estudiante/juan-soto     ●──●──●     ── PR borrador ──┤      │
- │       │                                                         │      │
- │       └─▶ docente/solucion         ●────●   (se publica al      ▼      │
- │                                             cerrar cada plazo)  Revisión│
- │                                                                 y comentarios
- └────────────────────────────────────────────────────────────────────────┘
+
+**Cómo se entrega y se revisa:**
+
+```mermaid
+flowchart LR
+  A["Rama del estudiante<br/>estudiante/nombre-apellido"] -->|git push| B["PR en borrador<br/>Entrega · Nombre Apellido"]
+  B --> C["Docente revisa<br/>y comenta"]
+  C -->|correcciones| A
+  B -. "nunca se fusiona" .-x M["main"]
+  D["docente/solucion<br/>(solo local)"] -->|"al cerrar el plazo:<br/>git push"| E["Solución visible<br/>en GitHub"]
 ```
 
 - **`main`** tiene la plantilla base del proyecto (Expo SDK 58). Está protegida: nadie puede modificarla salvo el docente.
@@ -45,8 +56,8 @@ Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **v
 | Rama del estudiante | `estudiante/nombre-apellido` (minúsculas, sin tildes ni ñ) | `estudiante/maria-perez` |
 | Mensaje de commit de avance | `Avance NN: descripción breve` | `Avance 01: pantalla de inicio` |
 | Commits intermedios | Verbo + qué cambió | `Agrega TarjetaPaciente con foto` |
-| Título del Pull Request | `Entrega · Nombre Apellido` | `Entrega · María Pérez` |
-| Rama del docente | `docente/solucion` | — |
+| Título del Pull Request | `Entrega - Nombre Apellido` | `Entrega - María Pérez` |
+| Rama del docente | `docente/solucion` | - |
 | Commits del docente en `main` | `Base: descripción` | `Base: imágenes de pacientes` |
 
 ## Lo que NO se sube al repositorio
@@ -56,7 +67,7 @@ Ya está configurado en `.gitignore`:
 - `node_modules/`: se reconstruye con `npm install`.
 - `.expo/`: caché local de Expo.
 - `example/`: la plantilla original que guarda `npm run reset-project`. Queda en tu computador para consultarla.
-- `AGENTS.md` y `.claude/`: archivos de configuración de asistentes de IA.
+- `AGENTS.md` y `.claude/`: archivos de configuración de asistentes de IA Gen.
 
 ## Glosario rápido
 
