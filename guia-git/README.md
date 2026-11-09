@@ -1,7 +1,7 @@
 # Guía Git - vetChiloé en Terreno
 
-Tecnología Web y Móvil - Unidad II  
-Victor Saldivia Vera - victor.saldivia@ulagos.cl
+**Asignatura:** Tecnología Web y Móvil - Unidad II  
+**Docente:** Victor Saldivia Vera - victor.saldivia@ulagos.cl
 
 Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **vetChiloé en Terreno**.
 
@@ -22,7 +22,7 @@ gitGraph
   commit id: "Plantilla base"
   branch estudiante/maria-perez
   commit id: "María - Avance 01"
-  commit id: "María ·- Avance 02"
+  commit id: "María - Avance 02"
   checkout main
   branch estudiante/juan-soto
   commit id: "Juan - Avance 01"
@@ -37,7 +37,7 @@ gitGraph
 
 ```mermaid
 flowchart LR
-  A["Rama del estudiante<br/>estudiante/nombre-apellido"] -->|git push| B["PR en borrador<br/>Entrega · Nombre Apellido"]
+  A["Rama del estudiante<br/>estudiante/nombre-apellido"] -->|git push| B["PR en borrador<br/>Entrega - Nombre Apellido"]
   B --> C["Docente revisa<br/>y comenta"]
   C -->|correcciones| A
   B -. "nunca se fusiona" .-x M["main"]
