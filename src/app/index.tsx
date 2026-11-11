@@ -5,7 +5,7 @@ import { pacientesMock } from '@/data/pacientesMock';
 export default function Index() {
   return (
     <View style={styles.contenedor}>
-      <Text style={styles.subtitulo}>La clínica verChiloé, ahora en terreno</Text>
+      <Text style={styles.subtitulo}>La clínica vetChiloé, ahora en terreno</Text>
       <FlatList
         data={pacientesMock}
         keyExtractor={(p) => p.id.toString()}
