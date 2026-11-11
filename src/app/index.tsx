@@ -1,98 +1,117 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { TarjetaPaciente } from '@/components/TarjetaPaciente';
+import { pacientesMock } from '@/data/pacientesMock';
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.eyebrow}>ATENCIÓN VETERINARIA</Text>
+          <Text style={styles.title}>vetChiloé</Text>
+          <Text style={styles.subtitle}>en Terreno</Text>
+          <Text style={styles.description}>
+            Tus pacientes, siempre a mano.
+          </Text>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>Pacientes de ejemplo</Text>
+            <Text style={styles.sectionSubtitle}>Atenciones recientes</Text>
+          </View>
+          <View style={styles.countBadge}>
+            <Text style={styles.countText}>{pacientesMock.length}</Text>
+          </View>
+        </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        <View style={styles.patientList}>
+          {pacientesMock.map((paciente) => (
+            <TarjetaPaciente
+              key={paciente.id}
+              nombre={paciente.nombre}
+              especie={paciente.especie}
+              foto={paciente.foto}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: '#F5F8F5',
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  content: {
+    paddingHorizontal: 22,
+    paddingTop: 16,
+    paddingBottom: 36,
+  },
+  header: {
+    backgroundColor: '#174C3C',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 30,
+  },
+  eyebrow: {
+    color: '#B9D9C9',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.4,
+    marginBottom: 16,
   },
   title: {
-    textAlign: 'center',
+    color: '#FFFFFF',
+    fontSize: 34,
+    fontWeight: '800',
+    letterSpacing: -0.8,
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    color: '#D5E9DD',
+    fontSize: 20,
+    fontWeight: '600',
+    marginTop: 1,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  description: {
+    color: '#D5E9DD',
+    fontSize: 14,
+    marginTop: 18,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    color: '#18352B',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  sectionSubtitle: {
+    color: '#718078',
+    fontSize: 13,
+    marginTop: 4,
+  },
+  countBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#DCEBE1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  countText: {
+    color: '#174C3C',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  patientList: {
+    gap: 12,
   },
 });
