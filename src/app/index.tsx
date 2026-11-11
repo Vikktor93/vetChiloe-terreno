@@ -1,17 +1,34 @@
-import { Text, View, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
+import TarjetaPaciente from '@/components/TarjetaPaciente';
+import { pacientesMock } from '@/data/pacientesMock';
 
 export default function Index() {
   return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+    <View style={styles.contenedor}>
+      <Text style={styles.subtitulo}>La clínica, ahora en terreno</Text>
+      <FlatList
+        data={pacientesMock}
+        keyExtractor={(paciente) => paciente.id.toString()}
+        renderItem={({ item }) => <TarjetaPaciente paciente={item} />}
+        contentContainerStyle={styles.lista}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    padding: 16,
+    backgroundColor: '#F6F2FC',
+  },
+  subtitulo: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 16,
+  },
+  lista: {
+    gap: 12,
   },
 });
