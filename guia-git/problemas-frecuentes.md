@@ -96,7 +96,7 @@ La versión del SDK del proyecto y la de Expo Go no coinciden. El proyecto usa *
 Ejecuta los comandos por separado, uno por línea:
 
 ```bash
-cd vetchiloe-terreno
+cd vetChiloe-terreno
 npm install
 ```
 

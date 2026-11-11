@@ -1,8 +1,8 @@
 # Flujo de trabajo del estudiante
 
-Guía para trabajar en **vetChiloé Terreno** con Git y GitHub. Sigue los pasos en orden. La parte A se hace **una sola vez** y la parte B se repite en **cada avance**.
+Guía para trabajar en **vetChiloé en Terreno** con Git y GitHub. Sigue los pasos en orden. La parte A se hace **una sola vez** y la parte B se repite en **cada avance**.
 
-> **Regla de oro:** trabaja siempre en **tu rama** `estudiante/nombre-apellido`. Nunca en `main`.
+> **Regla a Seguir:** trabaja siempre en **tu rama** `estudiante/nombre-apellido`. Nunca en `main`.
 
 ---
 
@@ -23,8 +23,8 @@ Guía para trabajar en **vetChiloé Terreno** con Git y GitHub. Sigue los pasos 
 Abre una terminal en la carpeta donde guardas tus proyectos:
 
 ```bash
-git clone https://github.com/Vikktor93/vetchiloe-terreno.git
-cd vetchiloe-terreno
+git clone https://github.com/Vikktor93/vetChiloe-terreno.git
+cd vetChiloe-terreno
 ```
 
 ### 2. Instalar las dependencias
@@ -160,6 +160,7 @@ Si aparece un **conflicto**, revisa [problemas-frecuentes.md](problemas-frecuent
 Cuando cierra el plazo de un avance, el docente publica la rama `docente/solucion`.
 
 **Opción 1 (recomendada), en GitHub:** selector de ramas → `docente/solucion` → navega por los archivos.
+Para ver la solución de **un avance específico**, en el mismo selector abre la pestaña **Tags** y elige, por ejemplo, `avance-01`.
 
 **Opción 2, en tu computador, para ejecutarla:**
 
@@ -188,7 +189,7 @@ git diff estudiante/nombre-apellido origin/docente/solucion -- src/
 
 | Momento | Comando |
 |---|---|
-| Clonar (una vez) | `git clone https://github.com/Vikktor93/vetchiloe-terreno.git` |
+| Clonar (una vez) | `git clone https://github.com/Vikktor93/vetChiloe-terreno.git` |
 | Instalar | `npm install` |
 | Crear mi rama (una vez) | `git checkout -b estudiante/nombre-apellido` |
 | Ver en qué rama estoy | `git branch` |
