@@ -5,8 +5,9 @@ export type Paciente = {
   especie: string;
   edad: number;
   diagnostico: string;
-  foto: string; // URL de la imagen
+  foto: string; // url de la imagen
 };
+
 export const pacientesMock: Paciente[] = [
   {
     id: 1,
@@ -15,7 +16,24 @@ export const pacientesMock: Paciente[] = [
     especie: "Canino",
     edad: 4,
     diagnostico: "Control anual",
-    foto: "https://…",
+    foto: "https://picsum.photos/id/237/200",
   },
-  // + 2 pacientes más, copiados de pacientesMock.js (web)
+  {
+    id: 2,
+    nombre: "Toby",
+    numero_atencion: "A-002",
+    especie: "Canino",
+    edad: 7,
+    diagnostico: "Vacunación",
+    foto: "https://picsum.photos/id/1025/200",
+  },
+  {
+    id: 3,
+    nombre: "Copito",
+    numero_atencion: "A-003",
+    especie: "Canino",
+    edad: 2,
+    diagnostico: "Revisión de piel",
+    foto: "https://picsum.photos/id/1062/200",
+  },
 ];
