@@ -1,8 +1,8 @@
 # Flujo de trabajo del docente
 
-Guía para administrar el repositorio **vetChiloé Terreno**: configuración inicial, solución de referencia, revisión de entregas y publicación de soluciones.
+Guía para administrar el repositorio **vetChiloé en Terreno**: configuración inicial, solución de referencia, revisión de entregas y publicación de soluciones.
 
-> **Regla de oro:** `main` contiene solo la **plantilla base**. La solución vive en `docente/solucion` y **se sube a GitHub solo cuando cierra el plazo** de cada avance.
+> **Regla a Seguir:** `main` contiene solo la **plantilla base**. La solución existe en `docente/solucion` y **se sube a GitHub solo cuando cierra el plazo** de cada avance.
 
 ---
 
@@ -42,11 +42,11 @@ git commit -m "Plantilla base vetChiloé Terreno (Expo SDK 58)"
 
 ### 2. Crear el repositorio en GitHub y subir `main`
 
-En GitHub, crear **`vetchiloe-terreno`** vacío (sin README, .gitignore ni licencia), **público**. Luego:
+En GitHub, crear **`vetChiloe-terreno`** vacío (sin README, .gitignore ni licencia), **público**. Luego:
 
 ```bash
 git branch -M main
-git remote add origin https://github.com/Vikktor93/vetchiloe-terreno.git
+git remote add origin https://github.com/Vikktor93/vetChiloe-terreno.git
 git push -u origin main
 ```
 
@@ -159,6 +159,13 @@ git checkout docente/solucion
 git push
 ```
 
+Marcar la versión con una **etiqueta (tag)** por avance. Así queda fija aunque la rama siga creciendo:
+
+```bash
+git tag avance-01
+git push origin avance-01
+```
+
 > **No abras un Pull Request** para `docente/solucion`. Es solo una rama de referencia. El ruleset protege solo `main`, por lo que este push no tiene restricciones.
 
 **Si la subiste antes de tiempo**, retírala de GitHub (queda intacta en tu computador):
@@ -198,6 +205,15 @@ git merge main
 
 Avisar a los estudiantes que ejecuten la **sección C** de su guía (`git merge main` en su rama).
 
+> **Durante el semestre, `main` nunca recibe la solución.** Si se fusionara, los estudiantes tendrían conflictos en casi todos sus archivos al hacer `git merge main`. `main` solo recibe material común (README, guías, imágenes).
+
+---
+
+## D. Al final del semestre (opcional)
+
+- **Para mostrar la app terminada en `main`:** abrir **un único** PR de `docente/solucion` hacia `main` y fusionarlo (estás en la bypass list).
+- **Para reutilizar el repositorio con otro curso:** no fusionar. `main` queda como plantilla y la app final queda en `docente/solucion` y en los tags.
+
 > Para dependencias nuevas usa siempre `npx expo install <paquete>` (no `npm install <paquete>`), así se instala la versión compatible con el SDK 58.
 
 ---
@@ -212,5 +228,6 @@ Avisar a los estudiantes que ejecuten la **sección C** de su guía (`git merge 
 | Probar la rama de un estudiante | `git checkout estudiante/x` y `npx expo start -c` |
 | Publicar solución (primera vez) | `git push -u origin docente/solucion` |
 | Publicar solución (siguientes) | `git push` |
+| Etiquetar avance | `git tag avance-NN` y `git push origin avance-NN` |
 | Retirar solución de GitHub | `git push origin --delete docente/solucion` |
 | Actualizar base | En `main`: commit y `git push`; después, en tu rama: `git merge main` |

@@ -1,9 +1,9 @@
-# Guía Git - vetChiloé en Terreno
+# Guía Git · vetChiloé Terreno
 
-**Asignatura:** Tecnología Web y Móvil - Unidad II  
-**Docente:** Victor Saldivia Vera - victor.saldivia@ulagos.cl
+Tecnología Web y Móvil · Unidad II
+Victor Saldivia Vera · victor.saldivia@ulagos.cl
 
-Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **vetChiloé en Terreno**.
+Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **vetChiloé Terreno**.
 
 | Archivo | Para quién | Qué contiene |
 |---|---|---|
@@ -21,11 +21,11 @@ Esta carpeta explica cómo trabajamos con Git y GitHub en el proyecto móvil **v
 gitGraph
   commit id: "Plantilla base"
   branch estudiante/maria-perez
-  commit id: "María - Avance 01"
-  commit id: "María - Avance 02"
+  commit id: "María · Avance 01"
+  commit id: "María · Avance 02"
   checkout main
   branch estudiante/juan-soto
-  commit id: "Juan - Avance 01"
+  commit id: "Juan · Avance 01"
   checkout main
   branch docente/solucion
   commit id: "Solución 01"
@@ -37,7 +37,7 @@ gitGraph
 
 ```mermaid
 flowchart LR
-  A["Rama del estudiante<br/>estudiante/nombre-apellido"] -->|git push| B["PR en borrador<br/>Entrega - Nombre Apellido"]
+  A["Rama del estudiante<br/>estudiante/nombre-apellido"] -->|git push| B["PR en borrador<br/>Entrega · Nombre Apellido"]
   B --> C["Docente revisa<br/>y comenta"]
   C -->|correcciones| A
   B -. "nunca se fusiona" .-x M["main"]
@@ -56,8 +56,8 @@ flowchart LR
 | Rama del estudiante | `estudiante/nombre-apellido` (minúsculas, sin tildes ni ñ) | `estudiante/maria-perez` |
 | Mensaje de commit de avance | `Avance NN: descripción breve` | `Avance 01: pantalla de inicio` |
 | Commits intermedios | Verbo + qué cambió | `Agrega TarjetaPaciente con foto` |
-| Título del Pull Request | `Entrega - Nombre Apellido` | `Entrega - María Pérez` |
-| Rama del docente | `docente/solucion` | - |
+| Título del Pull Request | `Entrega · Nombre Apellido` | `Entrega · María Pérez` |
+| Rama del docente | `docente/solucion` | — |
 | Commits del docente en `main` | `Base: descripción` | `Base: imágenes de pacientes` |
 
 ## Lo que NO se sube al repositorio
@@ -67,7 +67,7 @@ Ya está configurado en `.gitignore`:
 - `node_modules/`: se reconstruye con `npm install`.
 - `.expo/`: caché local de Expo.
 - `example/`: la plantilla original que guarda `npm run reset-project`. Queda en tu computador para consultarla.
-- `AGENTS.md` y `.claude/`: archivos de configuración de asistentes de IA Gen.
+- `AGENTS.md` y `.claude/`: archivos de configuración de asistentes de IA.
 
 ## Glosario rápido
 
