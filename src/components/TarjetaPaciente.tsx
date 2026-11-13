@@ -1,18 +1,25 @@
-﻿import { View, Text, Image, StyleSheet } from 'react-native';
+﻿import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 import { Paciente } from '@/data/pacientesMock';
+import { Colores } from '@/constants/colores';
 
 type Props = { paciente: Paciente };
 
 export default function TarjetaPaciente({ paciente }: Props) {
   return (
-    <View style={styles.tarjeta}>
+    <Pressable
+      onPress={() => router.push(`/paciente/${paciente.id}`)}
+      style={({ pressed }) => [
+        styles.tarjeta,
+        pressed && { opacity: 0.75, borderColor: Colores.primario },
+      ]}>
       <Image source={{ uri: paciente.foto }} style={styles.foto} />
       <View style={styles.info}>
         <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text>{paciente.especie} · {paciente.edad} años</Text>
+        <Text style={styles.detalle}>{paciente.especie} · {paciente.edad} años</Text>
         <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -23,12 +30,19 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: Colores.tarjeta,
     borderWidth: 1,
-    borderColor: '#E4DCF2',
+    borderColor: Colores.borde,
   },
-  foto: { width: 64, height: 64, borderRadius: 32 },
+  foto: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    borderColor: Colores.primarioOscuro,
+  },
   info: { flex: 1 },
-  nombre: { fontSize: 18, fontWeight: 'bold', color: '#6A43A8' },
-  atencion: { color: '#888', fontSize: 12 },
+  nombre: { fontSize: 18, fontWeight: 'bold', color: Colores.primario },
+  detalle: { color: Colores.texto },
+  atencion: { color: Colores.textoSecundario, fontSize: 12 },
 });
