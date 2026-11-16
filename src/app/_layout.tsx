@@ -8,7 +8,7 @@ export default function RootLayout() {
         headerTintColor: "#fff",
       }}
     >
-      <Stack.Screen name="index" options={{ title: "vectChiloe Terreno" }} />
+      <Stack.Screen name="index" options={{ title: "vetChiloe Terreno" }} />
     </Stack>
   );
 }
