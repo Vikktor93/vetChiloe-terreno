@@ -1,5 +1,7 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { Link } from 'expo-router';
 import { Paciente } from '@/data/pacientesMock';
+import { Colores } from '@/constants/colores';
 
 type Props = {
   paciente: Paciente;
@@ -7,19 +9,22 @@ type Props = {
 
 export default function TarjetaPaciente({ paciente }: Props) {
   return (
-    <View style={styles.tarjeta}>
-      <Image 
-        source={{ uri: paciente.foto }} 
-        style={styles.foto} 
-      />
-      <View style={styles.info}>
-        <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text style={styles.detalles}>
-          {paciente.especie} · {paciente.edad} años
-        </Text>
-      </View>
-      <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
-    </View>
+    <Link href={`/paciente/${paciente.id}`} asChild>
+      <Pressable>
+        {({ pressed }) => (
+          <View style={[styles.tarjeta, pressed && styles.presionada]}>
+            <Image source={{ uri: paciente.foto }} style={styles.foto} />
+            <View style={styles.info}>
+              <Text style={styles.nombre}>{paciente.nombre}</Text>
+              <Text style={styles.detalles}>
+                {paciente.especie} · {paciente.edad} años
+              </Text>
+            </View>
+            <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
+          </View>
+        )}
+      </Pressable>
+    </Link>
   );
 }
 
@@ -27,24 +32,28 @@ const styles = StyleSheet.create({
   tarjeta: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
     gap: 12,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+    padding: 14,
+    borderRadius: 14,
+    backgroundColor: Colores.tarjeta,
     borderWidth: 1,
-    borderColor: '#F3E8EE', // Borde rosado muy tenue
-    // Sombra sutil para darle elevación sin recargar
-    shadowColor: '#9E6B7B',
+    borderColor: Colores.borde,
+    shadowColor: Colores.primarioOscuro,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
   },
+  presionada: {
+    opacity: 0.85,
+    backgroundColor: Colores.fondo,
+  },
   foto: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FBEFF4', // Fondo mientras carga la imagen
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colores.fondo,
   },
   info: {
     flex: 1,
@@ -52,20 +61,21 @@ const styles = StyleSheet.create({
   nombre: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#9E4B6C', // Rosa palo oscuro / Berry sobrio
+    color: Colores.primario,
   },
   detalles: {
     fontSize: 14,
-    color: '#6E5D65', // Gris neutro con matiz cálido
+    color: Colores.textoSecundario,
     marginTop: 2,
   },
   atencion: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#C27B9B', // Rosa viejo suave para el número de atención
-    backgroundColor: '#FDF2F7', // Fondo tipo badge suave
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    color: Colores.primario,
+    backgroundColor: Colores.fondo,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
 });
