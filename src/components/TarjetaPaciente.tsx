@@ -1,5 +1,7 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Link } from 'expo-router';
 
+import { Colores } from '@/constants/colores';
 import type { Paciente } from '@/data/pacientesMock';
 
 type Props = {
@@ -8,20 +10,32 @@ type Props = {
 
 export default function TarjetaPaciente({ paciente }: Props) {
   return (
-    <View style={styles.tarjeta}>
-      <Image
-        source={{ uri: paciente.foto }}
-        style={styles.foto}
-        accessibilityLabel={`Foto de ${paciente.nombre}`}
-      />
-      <View style={styles.info}>
-        <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text>
-          {paciente.especie} · {paciente.edad} años
-        </Text>
-        <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
-      </View>
-    </View>
+    <Link
+      href={{ pathname: '/paciente/[id]', params: { id: paciente.id } }}
+      asChild
+    >
+      <Pressable
+        style={({ pressed }) => [
+          styles.tarjeta,
+          pressed && styles.presionada,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={`Ver ficha de ${paciente.nombre}`}
+      >
+        <Image
+          source={{ uri: paciente.foto }}
+          style={styles.foto}
+          accessibilityLabel={`Foto de ${paciente.nombre}`}
+        />
+        <View style={styles.info}>
+          <Text style={styles.nombre}>{paciente.nombre}</Text>
+          <Text style={styles.detalle}>
+            {paciente.especie} · {paciente.edad} años
+          </Text>
+          <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
+        </View>
+      </Pressable>
+    </Link>
   );
 }
 
@@ -32,9 +46,12 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: Colores.tarjeta,
     borderWidth: 1,
-    borderColor: '#E4DCF2',
+    borderColor: Colores.borde,
+  },
+  presionada: {
+    opacity: 0.7,
   },
   foto: {
     width: 64,
@@ -48,10 +65,13 @@ const styles = StyleSheet.create({
   nombre: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#6A43A8',
+    color: Colores.primario,
+  },
+  detalle: {
+    color: Colores.texto,
   },
   atencion: {
-    color: '#888',
+    color: Colores.textoSecundario,
     fontSize: 12,
   },
 });
