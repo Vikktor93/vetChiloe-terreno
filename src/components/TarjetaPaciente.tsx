@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#F2F0F5',
+    backgroundColor: Colores.borde,
   },
   info: {
     flex: 1,

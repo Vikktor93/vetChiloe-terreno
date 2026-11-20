@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 48,
     gap: 8,
+    backgroundColor: Colores.fondo,
   },
   avatar: {
     width: 96,
