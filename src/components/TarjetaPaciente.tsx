@@ -1,7 +1,8 @@
+import FotoPaciente from "@/components/FotoPaciente";
 import { Colores, Espacio, Radio, Tipografia } from "@/constants/tema";
 import { Paciente } from "@/data/pacientesMock";
 import { Link } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {paciente: Paciente};
 
@@ -19,7 +20,7 @@ export default function TarjetaPaciente({paciente}: Props) {
         {/* el estilo va en un View adentro, porque Link asChild no pasa bien el style de Pressable */}
         {({pressed}) => (
           <View style={[styles.tarjeta, pressed && styles.presionada]}>
-            <Image source={paciente.foto} style={styles.foto} />
+            <FotoPaciente paciente={paciente} style={styles.foto} />
             <View style={styles.info}>
               <Text style={styles.nombre}>{paciente.nombre}</Text>
               <Text style={styles.datos}>

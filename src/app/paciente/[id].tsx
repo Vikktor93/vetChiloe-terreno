@@ -1,25 +1,56 @@
 import Boton from "@/components/Boton";
+import FotoPaciente from "@/components/FotoPaciente";
 import { Colores, Espacio, Radio, Tipografia } from "@/constants/tema";
-import { pacientesMock } from "@/data/pacientesMock";
+import { Paciente } from "@/data/pacientesMock";
+import { obtenerPaciente } from "@/services/api";
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator, Alert, ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function FichaPaciente() {
   const insets = useSafeAreaInsets(); // antes de cualquier return
   const {id} = useLocalSearchParams<{id: string}>();
-  const paciente = pacientesMock.find((p) => p.id === Number(id));
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    // si el usuario sale antes de que responda, no se actualiza el estado
+    let activo = true;
+    obtenerPaciente(id)
+      .then((p) => activo && setPaciente(p))
+      .catch((e) => activo && setError(e.message));
+    return () => {
+      activo = false;
+    };
+  }, [id]);
+
+  if (error) {
+    return (
+      <Text style={styles.vacio}>
+        No se pudo cargar la ficha. Revisa tu conexión.
+      </Text>
+    );
+  }
   if (!paciente) {
-    return <Text style={styles.vacio}>Paciente no encontrado</Text>;
+    return (
+      <View style={styles.centro}>
+        <ActivityIndicator size="large" color={Colores.primarioOscuro} />
+      </View>
+    );
   }
 
   return (
     <View style={styles.pantalla}>
       <Stack.Screen options={{title: paciente.nombre}} />
       <ScrollView contentContainerStyle={styles.contenedor}>
-        <Image source={paciente.foto} style={styles.foto} />
+        <FotoPaciente paciente={paciente} style={styles.foto} />
         <Text style={styles.nombre}>{paciente.nombre}</Text>
         <View
           style={styles.diagnostico}
@@ -60,9 +91,24 @@ export default function FichaPaciente() {
 
 const styles = StyleSheet.create({
   pantalla: {flex: 1, backgroundColor: Colores.fondo},
+  centro: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colores.fondo,
+  },
   contenedor: {padding: Espacio.l, gap: Espacio.m},
   foto: {width: "100%", height: 260, borderRadius: Radio.l},
   nombre: {...Tipografia.titulo, color: Colores.primarioOscuro},
+  // el diagnostico va destacado en naranja, es lo primero que se mira
+  diagnostico: {
+    backgroundColor: Colores.acento,
+    padding: Espacio.m,
+    borderRadius: Radio.m,
+    gap: Espacio.xs,
+  },
+  diagnosticoEtiqueta: {...Tipografia.etiqueta, color: Colores.acentoOscuro},
+  diagnosticoTexto: {...Tipografia.subtitulo, color: Colores.acentoOscuro},
   fila: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -82,18 +128,10 @@ const styles = StyleSheet.create({
   },
   vacio: {
     ...Tipografia.cuerpo,
+    flex: 1,
     padding: Espacio.l,
     textAlign: "center",
     color: Colores.texto,
+    backgroundColor: Colores.fondo,
   },
-
-  // el diagnostico va destacado en naranja, es lo primero que se mira
-  diagnostico: {
-    backgroundColor: Colores.acento,
-    padding: Espacio.m,
-    borderRadius: Radio.m,
-    gap: Espacio.xs,
-  },
-  diagnosticoEtiqueta: {...Tipografia.etiqueta, color: Colores.acentoOscuro},
-  diagnosticoTexto: {...Tipografia.subtitulo, color: Colores.acentoOscuro},
 });
