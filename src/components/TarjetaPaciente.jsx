@@ -28,7 +28,7 @@ export default function TarjetaPaciente({ paciente }) {
           {paciente.nombre}
         </Text>
         <Text style={styles.detalle} numberOfLines={1}>
-          {paciente.especie} · {paciente.edad} años
+          {paciente.especie} · {paciente.edad}
         </Text>
         <View style={styles.diagnostico}>
           <Stethoscope size={16} color={colors.verde} />

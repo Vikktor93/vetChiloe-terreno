@@ -91,6 +91,158 @@ export const typography = {
 
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24 };
 export const radius = { sm: 12, md: 16, lg: 24, pill: 999 };
+
+export const skeleton = {
+  boneColor: "#D8E9C0",
+  highlightColor: colors.crema,
+  layouts: {
+    pacientesSubtitulo: [{ width: 128, height: 14 }],
+    pacientes: Array.from({ length: 3 }, () => ({
+      width: "100%",
+      height: 96,
+      marginBottom: spacing.md,
+      padding: spacing.md,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
+      backgroundColor: colors.blanco,
+      borderColor: colors.petroleo,
+      borderWidth: 1,
+      borderRadius: radius.md,
+      children: [
+        { width: 60, height: 60, borderRadius: 30 },
+        {
+          flex: 1,
+          gap: spacing.xs,
+          children: [
+            { width: 112, height: 16 },
+            { width: 88, height: 14 },
+            { width: 104, height: 14 },
+          ],
+        },
+        { width: 18, height: 48 },
+      ],
+    })),
+    ficha: [
+      {
+        width: "100%",
+        height: 64,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.sm,
+        children: [
+          { width: 48, height: 48, borderRadius: 24 },
+          { width: 180, height: 24 },
+        ],
+      },
+      {
+        width: "100%",
+        marginTop: spacing.sm,
+        borderRadius: radius.md,
+        overflow: "hidden",
+        backgroundColor: colors.blanco,
+        children: [
+          {
+            width: "100%",
+            height: 190,
+            backgroundColor: colors.petroleo,
+            children: [
+              {
+                width: 88,
+                height: 88,
+                borderRadius: 44,
+                alignSelf: "center",
+                marginTop: spacing.lg,
+              },
+              {
+                width: 160,
+                height: 20,
+                alignSelf: "center",
+                marginTop: 16,
+              },
+              {
+                width: 112,
+                height: 16,
+                alignSelf: "center",
+                marginTop: spacing.xs,
+              },
+            ],
+          },
+          {
+            width: "100%",
+            height: 52,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+            children: [
+              { width: 64, height: 16 },
+              { width: 64, height: 16 },
+              { width: 64, height: 16 },
+            ],
+          },
+          {
+            width: "100%",
+            padding: spacing.md,
+            gap: spacing.sm,
+            children: [
+              ...Array.from({ length: 3 }, () => ({
+                width: "100%",
+                height: 48,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: spacing.sm,
+                borderRadius: radius.pill,
+                paddingHorizontal: spacing.sm,
+                children: [
+                  { width: 32, height: 32, borderRadius: 16 },
+                  {
+                    flex: 1,
+                    gap: spacing.xs,
+                    children: [
+                      { width: 76, height: 12 },
+                      { width: 116, height: 14 },
+                    ],
+                  },
+                ],
+              })),
+              {
+                width: "100%",
+                height: 48,
+                marginTop: spacing.sm,
+                flexDirection: "row",
+                gap: spacing.sm,
+                children: [
+                  { width: 112, height: 48, borderRadius: radius.pill },
+                  { width: 112, height: 48, borderRadius: radius.pill },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  styles: StyleSheet.create({
+    pacientesSubtitulo: {
+      width: 128,
+      height: 20,
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+    pacientesLista: {
+      width: "100%",
+      alignItems: "stretch",
+    },
+    ficha: {
+      flex: 1,
+      width: "100%",
+      alignItems: "stretch",
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.sm,
+    },
+  }),
+};
+
 export const shadow = Platform.select({
   ios: {
     shadowColor: colors.petroleo,
@@ -220,6 +372,7 @@ export const theme = {
   typography,
   spacing,
   radius,
+  skeleton,
   shadow,
   layout,
   MIN_TOUCH,

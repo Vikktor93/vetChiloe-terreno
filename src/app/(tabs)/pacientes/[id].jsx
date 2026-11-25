@@ -2,45 +2,70 @@ import React from "react";
 import {
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import * as Haptics from "expo-haptics";
 import {
   ArrowLeft,
   CalendarPlus,
   MapPin,
   PencilLine,
-  Phone,
   UserRound,
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BotonRegistrarVisita from "../../../components/BotonRegistrarVisita";
+import Skeleton from "react-native-reanimated-skeleton";
 import {
   colors,
   radius,
+  skeleton,
   spacing,
   typography,
   touchTarget,
 } from "../../../constants/tema";
-import { pacientesMock } from "../../../data/pacientesMocks";
+import { usePacientes } from "../../../hooks/usePaciente";
 
 export default function PacienteDetalle() {
   const { id } = useLocalSearchParams();
-  const paciente = pacientesMock.find((item) => item.id.toString() === id);
+  const pacienteId = Array.isArray(id) ? id[0] : id;
+  const { pacientes, cargando, recargando, error, recargar } = usePacientes();
+  const paciente = pacientes.find(
+    (item) => item.id.toString() === pacienteId,
+  );
 
-  const vibrarAlAgendarVisita = () => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch((error) => {
-      console.error("No se pudo ejecutar la respuesta háptica al agendar visita.", error);
-    });
-  };
-
-  if (!paciente) {
+  if (cargando) {
     return (
       <SafeAreaView edges={["top"]} style={styles.contenedor}>
-        <Text style={styles.sinResultados}>Paciente no encontrado.</Text>
+        <Skeleton
+          isLoading
+          containerStyle={skeleton.styles.ficha}
+          layout={skeleton.layouts.ficha}
+          boneColor={skeleton.boneColor}
+          highlightColor={skeleton.highlightColor}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !paciente) {
+    return (
+      <SafeAreaView edges={["top"]} style={styles.contenedor}>
+        <Text style={styles.sinResultados}>
+          {error || "Paciente no encontrado."}
+        </Text>
+        {error && (
+          <Pressable
+            onPress={recargar}
+            accessibilityRole="button"
+            style={styles.botonReintentar}
+          >
+            <Text style={styles.textoReintentar}>Reintentar</Text>
+          </Pressable>
+        )}
       </SafeAreaView>
     );
   }
@@ -66,6 +91,14 @@ export default function PacienteDetalle() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContenido}
+        refreshControl={
+          <RefreshControl
+            refreshing={recargando}
+            onRefresh={recargar}
+            tintColor={colors.petroleo}
+            colors={[colors.petroleo]}
+          />
+        }
       >
         <View style={styles.tarjeta}>
           <View style={styles.hero}>
@@ -84,7 +117,7 @@ export default function PacienteDetalle() {
             </View>
             <View style={styles.heroPie}>
               <Text style={styles.nombre}>{paciente.nombre}</Text>
-              <Text style={styles.raza}>{paciente.especie} · {paciente.edad} años</Text>
+              <Text style={styles.raza}>{paciente.especie} · {paciente.edad}</Text>
             </View>
           </View>
 
@@ -93,7 +126,7 @@ export default function PacienteDetalle() {
               <Text style={styles.valorDato}>{paciente.especie}</Text>
             </View>
             <View style={[styles.datoRapido, styles.datoSeparado]}>
-              <Text style={styles.valorDato}>{paciente.edad} años</Text>
+              <Text style={styles.valorDato}>{paciente.edad}</Text>
             </View>
             <View style={[styles.datoRapido, styles.datoSeparado]}>
               <Text style={styles.valorDato}>{paciente.numero_atencion}</Text>
@@ -117,7 +150,7 @@ export default function PacienteDetalle() {
               </View>
               <View style={styles.textoFila}>
                 <Text style={styles.etiqueta}>Edad</Text>
-                <Text style={styles.valorInfo}>{paciente.edad} años</Text>
+                <Text style={styles.valorInfo}>{paciente.edad}</Text>
               </View>
             </View>
 
@@ -131,34 +164,25 @@ export default function PacienteDetalle() {
               </View>
             </View>
 
-            <View style={styles.botonesAccion}>
-              <Pressable
-                style={({ hovered, pressed }) => [
-                  styles.botonSecundario,
-                  (hovered || pressed) && styles.botonSecundarioHover,
-                ]}
-                onPress={() => {}}
-                accessibilityRole="button"
-                accessibilityLabel={`Volver a la ficha de ${paciente.nombre}`}
-              >
-                <PencilLine size={18} color={colors.petroleo} />
-                <Text style={styles.textoBotonSecundario}>Volver ficha</Text>
-              </Pressable>
-              <Pressable
-                style={({ hovered, pressed }) => [
-                  styles.botonPrimario,
-                  (hovered || pressed) && styles.botonPrimarioHover,
-                ]}
-                onPress={vibrarAlAgendarVisita}
-                accessibilityRole="button"
-                accessibilityLabel={`Agendar visita para ${paciente.nombre}`}
-              >
-                <Phone size={17} color={colors.blanco} />
-                <Text style={styles.textoBotonPrimario}>Agendar visita</Text>
-              </Pressable>
-            </View>
+          </View>
+          <View style={styles.accionRegistrar}>
+            <BotonRegistrarVisita
+              accessibilityLabel={`Registrar visita para ${paciente.nombre}`}
+            />
           </View>
         </View>
+        <Pressable
+          style={({ hovered, pressed }) => [
+            styles.botonSecundario,
+            (hovered || pressed) && styles.botonSecundarioHover,
+          ]}
+          onPress={() => {}}
+          accessibilityRole="button"
+          accessibilityLabel={`Volver a la ficha de ${paciente.nombre}`}
+        >
+          <PencilLine size={18} color={colors.petroleo} />
+          <Text style={styles.textoBotonSecundario}>Volver a la ficha</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -339,22 +363,19 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.petroleo,
   },
-  botonesAccion: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
   botonSecundario: {
-    flex: 1,
+    alignSelf: "center",
     height: 48,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.xs,
+    marginTop: spacing.md,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: colors.petroleo,
     backgroundColor: colors.blanco,
+    paddingHorizontal: spacing.md,
   },
   botonSecundarioHover: {
     backgroundColor: colors.lima,
@@ -363,27 +384,24 @@ const styles = StyleSheet.create({
     ...typography.label,
     color: colors.petroleo,
   },
-  botonPrimario: {
-    flex: 1,
-    height: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    borderRadius: radius.pill,
-    backgroundColor: colors.verde,
-  },
-  botonPrimarioHover: {
-    backgroundColor: colors.petroleo,
-  },
-  textoBotonPrimario: {
-    ...typography.label,
-    color: colors.blanco,
+  accionRegistrar: {
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.md,
   },
   sinResultados: {
     marginTop: spacing.xxl,
     ...typography.body,
     color: colors.textMuted,
     textAlign: "center",
+  },
+  botonReintentar: {
+    minHeight: 44,
+    alignSelf: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+  },
+  textoReintentar: {
+    ...typography.label,
+    color: colors.petroleo,
   },
 });

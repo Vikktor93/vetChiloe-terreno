@@ -8,14 +8,23 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Skeleton from "react-native-reanimated-skeleton";
 import {
   PawPrint,
   Plus,
   Search,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { colors, fontSize, layout, radius, shadow, spacing } from "../../../constants/tema";
-import { pacientesMock } from "../../../data/pacientesMocks";
+import {
+  colors,
+  fontSize,
+  layout,
+  radius,
+  shadow,
+  skeleton,
+  spacing,
+} from "../../../constants/tema";
+import { usePacientes } from "../../../hooks/usePaciente";
 import TarjetaPaciente from "../../../components/TarjetaPaciente"
 
 const filtros = ["Todos", "Perros", "Gatos", "Otros"];
@@ -28,6 +37,7 @@ const especiesPorFiltro = {
 export default function Pacientes() {
   const [busqueda, setBusqueda] = useState("");
   const [filtroActivo, setFiltroActivo] = useState("Todos");
+  const { pacientes, cargando, recargando, error, recargar } = usePacientes();
 
   const vibrarAlAgregarPaciente = () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch((error) => {
@@ -39,7 +49,7 @@ export default function Pacientes() {
     const termino = busqueda.trim().toLocaleLowerCase();
     const especie = especiesPorFiltro[filtroActivo];
 
-    return pacientesMock.filter((paciente) => {
+    return pacientes.filter((paciente) => {
       const coincideFiltro =
         filtroActivo === "Todos" ||
         (especie
@@ -59,12 +69,14 @@ export default function Pacientes() {
 
       return coincideFiltro && coincideBusqueda;
     });
-  }, [busqueda, filtroActivo]);
+  }, [busqueda, filtroActivo, pacientes]);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.contenedor}>
       <FlatList
         data={pacientesFiltrados}
+        refreshing={recargando}
+        onRefresh={recargar}
         keyExtractor={(paciente) => paciente.id.toString()}
         renderItem={({ item }) => <TarjetaPaciente paciente={item} />}
         contentContainerStyle={styles.lista}
@@ -74,9 +86,19 @@ export default function Pacientes() {
             <View style={styles.encabezado}>
               <View>
                 <Text style={styles.titulo}>Pacientes</Text>
-                <Text style={styles.subtitulo}>
-                  {pacientesMock.length} pacientes registrados
-                </Text>
+                {cargando ? (
+                  <Skeleton
+                    isLoading
+                    containerStyle={skeleton.styles.pacientesSubtitulo}
+                    layout={skeleton.layouts.pacientesSubtitulo}
+                    boneColor={skeleton.boneColor}
+                    highlightColor={skeleton.highlightColor}
+                  />
+                ) : (
+                  <Text style={styles.subtitulo}>
+                    {pacientes.length} pacientes registrados
+                  </Text>
+                )}
               </View>
             </View>
 
@@ -130,9 +152,33 @@ export default function Pacientes() {
           </View>
         }
         ListEmptyComponent={
-          <Text style={styles.sinResultados}>
-            No se encontraron pacientes.
-          </Text>
+          cargando ? (
+            <Skeleton
+              isLoading
+              containerStyle={skeleton.styles.pacientesLista}
+              layout={skeleton.layouts.pacientes}
+              boneColor={skeleton.boneColor}
+              highlightColor={skeleton.highlightColor}
+            />
+          ) : (
+            <View style={styles.estadoLista}>
+              <Text style={styles.sinResultados}>
+                {error ||
+                  (pacientes.length === 0
+                    ? "No hay pacientes registrados."
+                    : "No se encontraron pacientes.")}
+              </Text>
+              {error && (
+                <Pressable
+                  onPress={recargar}
+                  accessibilityRole="button"
+                  style={styles.botonReintentar}
+                >
+                  <Text style={styles.textoReintentar}>Reintentar</Text>
+                </Pressable>
+              )}
+            </View>
+          )
         }
       />
       <Pressable
@@ -238,5 +284,18 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: "center",
     fontSize: fontSize.body,
+  },
+  estadoLista: {
+    alignItems: "center",
+  },
+  botonReintentar: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+  },
+  textoReintentar: {
+    color: colors.petroleo,
+    fontSize: fontSize.caption,
+    fontWeight: "700",
   },
 });
