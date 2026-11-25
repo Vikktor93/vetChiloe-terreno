@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
   View,
   Text,
   Image,
+  ActivityIndicator,
   StyleSheet,
   Animated,
 } from 'react-native';
@@ -11,7 +12,8 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { pacientesMock } from '@/data/pacientesMock';
+import { obtenerPaciente } from '@/services/api';
+import { Paciente } from '@/types/paciente';
 import {
   Colores,
   Espaciado,
@@ -24,13 +26,46 @@ import Boton from '@/components/Boton';
 export default function FichaPaciente() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const paciente = pacientesMock.find((p) => p.id === Number(id));
 
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [visitaIniciada, setVisitaIniciada] = useState(false);
   const animacionToast = useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    let activo = true;
+    setError(null);
+    setPaciente(null);
+
+    obtenerPaciente(id)
+      .then((p) => {
+        if (activo) setPaciente(p);
+      })
+      .catch((e) => {
+        if (activo) {
+          setError(e instanceof Error ? e.message : 'Error al cargar paciente');
+        }
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [id]);
+
+  if (error) {
+    return (
+      <View style={styles.centro}>
+        <Text style={styles.vacio}>{error}</Text>
+      </View>
+    );
+  }
+
   if (!paciente) {
-    return <Text style={styles.vacio}>Paciente no encontrado</Text>;
+    return (
+      <View style={styles.centro}>
+        <ActivityIndicator size="large" color={Colores.primario} />
+      </View>
+    );
   }
 
   const registrarVisita = async () => {
@@ -140,6 +175,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colores.fondo,
   },
+  centro: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colores.fondo,
+    padding: Espaciado.xl,
+  },
   contenedor: {
     flexGrow: 1,
     padding: Espaciado.xl,
@@ -179,7 +221,7 @@ const styles = StyleSheet.create({
     padding: Espaciado.xl,
     textAlign: 'center',
     fontSize: Tipografia.cuerpo,
-    color: Colores.textoSecundario,
+    color: Colores.alerta,
   },
   toast: {
     marginHorizontal: Espaciado.lg,
