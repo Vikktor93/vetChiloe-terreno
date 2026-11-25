@@ -8,25 +8,39 @@ import { Paciente } from '@/data/pacientesMock';
 import { obtenerPaciente } from '@/services/api';
 import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 
+type Resultado = { id: string; paciente?: Paciente; error?: string };
+
 export default function FichaPacienteScreen() {
   const insets = useSafeAreaInsets(); // antes de cualquier return
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [paciente, setPaciente] = useState<Paciente | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // Guardamos el resultado junto al id al que corresponde.
+  const [resultado, setResultado] = useState<Resultado | null>(null);
   const [intento, setIntento] = useState(0);
 
   // GET /api/pacientes/:id cada vez que cambia el id (o se reintenta)
   useEffect(() => {
     let activo = true;
-    setError(null);
-    setPaciente(null);
     obtenerPaciente(id)
-      .then((p) => activo && setPaciente(p))
-      .catch((e) => activo && setError(e instanceof Error ? e.message : 'Error desconocido'));
+      .then((p) => activo && setResultado({ id, paciente: p }))
+      .catch(
+        (e) =>
+          activo &&
+          setResultado({ id, error: e instanceof Error ? e.message : 'Error desconocido' })
+      );
     return () => {
       activo = false;
     };
   }, [id, intento]);
+
+  // Si el resultado es de otro id, todavía estamos cargando.
+  const actual = resultado?.id === id ? resultado : null;
+  const paciente = actual?.paciente;
+  const error = actual?.error;
+
+  const reintentar = () => {
+    setResultado(null);
+    setIntento((n) => n + 1);
+  };
 
   if (error) {
     return (
@@ -36,7 +50,7 @@ export default function FichaPacienteScreen() {
           No se pudo cargar la ficha.
         </Text>
         <Text style={styles.detalleError}>{error}</Text>
-        <Boton titulo="Reintentar" onPress={() => setIntento((n) => n + 1)} />
+        <Boton titulo="Reintentar" onPress={reintentar} />
         <Boton titulo="Volver" variante="secundario" onPress={() => router.back()} />
       </View>
     );
