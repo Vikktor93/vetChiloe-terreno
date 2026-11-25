@@ -6,7 +6,13 @@ import {
   View,
 } from 'react-native';
 
-import { Colores } from '@/constants/tema';
+import {
+  Colores,
+  Espacio,
+  Radio,
+  TamañoTexto,
+} from '@/constants/tema';
+
 import { Paciente } from '@/data/pacientesMock';
 import { Link } from 'expo-router';
 
@@ -24,6 +30,8 @@ export default function TarjetaPaciente({ paciente }: Props) {
       asChild
     >
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad} años`}
         style={({ pressed }) => [
           styles.tarjeta,
           pressed && styles.presionada,
@@ -32,6 +40,7 @@ export default function TarjetaPaciente({ paciente }: Props) {
         <Image
           source={{ uri: paciente.foto }}
           style={styles.foto}
+          accessibilityLabel={`Fotografía de ${paciente.nombre}`}
         />
 
         <View style={styles.info}>
@@ -57,11 +66,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colores.tarjeta,
-    borderRadius: 12,
+    borderRadius: Radio.medio,
     borderWidth: 1,
     borderColor: Colores.borde,
-    padding: 12,
-    gap: 12,
+    padding: Espacio.m,
+    gap: Espacio.m,
+    minHeight: 100,
   },
 
   presionada: {
@@ -71,27 +81,27 @@ const styles = StyleSheet.create({
   foto: {
     width: 75,
     height: 75,
-    borderRadius: 10,
+    borderRadius: Radio.pequeño,
   },
 
   info: {
     flex: 1,
-    gap: 4,
+    gap: Espacio.xs,
   },
 
   nombre: {
-    fontSize: 16,
+    fontSize: TamañoTexto.cuerpo,
     fontWeight: 'bold',
     color: Colores.texto,
   },
 
   detalle: {
-    fontSize: 14,
+    fontSize: TamañoTexto.pequeño,
     color: Colores.textoSecundario,
   },
 
   atencion: {
-    fontSize: 13,
+    fontSize: TamañoTexto.pequeño,
     fontWeight: '600',
     color: Colores.primario,
   },
