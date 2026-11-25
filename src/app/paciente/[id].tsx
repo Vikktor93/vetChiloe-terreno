@@ -21,11 +21,18 @@ export default function FichaPaciente() {
       <ScrollView contentContainerStyle={styles.contenedor}>
         <Image source={paciente.foto} style={styles.foto} />
         <Text style={styles.nombre}>{paciente.nombre}</Text>
+        <View
+          style={styles.diagnostico}
+          accessible
+          accessibilityLabel={`Diagnóstico: ${paciente.diagnostico}`}
+        >
+          <Text style={styles.diagnosticoEtiqueta}>Diagnóstico</Text>
+          <Text style={styles.diagnosticoTexto}>{paciente.diagnostico}</Text>
+        </View>
         {[
           ["Especie", paciente.especie],
           ["Edad", `${paciente.edad} años`],
           ["N° de atención", paciente.numero_atencion],
-          ["Diagnóstico", paciente.diagnostico],
         ].map(([etiqueta, valor]) => (
           <View key={etiqueta} style={styles.fila}>
             <Text style={styles.etiqueta}>{etiqueta}</Text>
@@ -79,4 +86,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colores.texto,
   },
+
+  // el diagnostico va destacado en naranja, es lo primero que se mira
+  diagnostico: {
+    backgroundColor: Colores.acento,
+    padding: Espacio.m,
+    borderRadius: Radio.m,
+    gap: Espacio.xs,
+  },
+  diagnosticoEtiqueta: {...Tipografia.etiqueta, color: Colores.acentoOscuro},
+  diagnosticoTexto: {...Tipografia.subtitulo, color: Colores.acentoOscuro},
 });
