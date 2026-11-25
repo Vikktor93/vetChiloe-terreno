@@ -13,7 +13,7 @@ import {
   TamañoTexto,
 } from '@/constants/tema';
 
-import { Paciente } from '@/data/pacientesMock';
+import { Paciente } from '@/types/paciente';
 import { Link } from 'expo-router';
 
 type Props = {
@@ -24,24 +24,30 @@ export default function TarjetaPaciente({ paciente }: Props) {
   return (
     <Link
       href={{
-        pathname: '/paciente/[id]' as any,
-        params: { id: paciente.id },
+        pathname: '/paciente/[id]',
+        params: { id: paciente.id.toString() },
       }}
       asChild
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad} años`}
+        accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad}`}
         style={({ pressed }) => [
           styles.tarjeta,
           pressed && styles.presionada,
         ]}
       >
-        <Image
-          source={{ uri: paciente.foto }}
-          style={styles.foto}
-          accessibilityLabel={`Fotografía de ${paciente.nombre}`}
-        />
+        {paciente.foto ? (
+          <Image
+            source={{ uri: paciente.foto }}
+            style={styles.foto}
+            accessibilityLabel={`Fotografía de ${paciente.nombre}`}
+          />
+        ) : (
+          <View style={styles.fotoVacia}>
+            <Text style={styles.textoFoto}>Sin foto</Text>
+          </View>
+        )}
 
         <View style={styles.info}>
           <Text style={styles.nombre}>
@@ -49,7 +55,7 @@ export default function TarjetaPaciente({ paciente }: Props) {
           </Text>
 
           <Text style={styles.detalle}>
-            {paciente.especie} · {paciente.edad} años
+            {paciente.especie} · {paciente.edad}
           </Text>
 
           <Text style={styles.atencion}>
@@ -82,6 +88,20 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: Radio.pequeño,
+  },
+
+  fotoVacia: {
+    width: 75,
+    height: 75,
+    borderRadius: Radio.pequeño,
+    backgroundColor: Colores.borde,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  textoFoto: {
+    fontSize: TamañoTexto.pequeño,
+    color: Colores.textoSecundario,
   },
 
   info: {

@@ -1,12 +1,22 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import Boton from '@/components/Boton';
-import { Colores, Espacio, Radio, TamañoTexto } from '@/constants/tema';
-import { pacientesMock } from '@/data/pacientesMock';
+import {
+  Colores,
+  Espacio,
+  Radio,
+  TamañoTexto,
+} from '@/constants/tema';
+import { obtenerPaciente } from '@/services/api';
+import { Paciente } from '@/types/paciente';
 
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 import {
+  ActivityIndicator,
   Alert,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,24 +30,80 @@ export default function FichaPaciente() {
 
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const paciente = pacientesMock.find(
-    (p) => p.id === Number(id)
-  );
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!paciente) {
+  const cargarPaciente = useCallback(async () => {
+    setCargando(true);
+    setError(null);
+
+    try {
+      const idNumerico = Number(id);
+
+      if (!Number.isInteger(idNumerico) || idNumerico <= 0) {
+        throw new Error('El ID del paciente no es válido.');
+      }
+
+      const datos = await obtenerPaciente(idNumerico);
+      setPaciente(datos);
+    } catch (err) {
+      setPaciente(null);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'No se pudo cargar la ficha del paciente.'
+      );
+    } finally {
+      setCargando(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    cargarPaciente();
+  }, [cargarPaciente]);
+
+  if (cargando) {
     return (
-      <View style={styles.contenedor}>
+      <View style={styles.estado}>
+        <ActivityIndicator size="large" color={Colores.primario} />
         <Text style={styles.vacio}>
-          Paciente no encontrado
+          Cargando ficha del paciente...
         </Text>
+      </View>
+    );
+  }
+
+  if (error || !paciente) {
+    return (
+      <View style={styles.estado}>
+        <Text style={styles.error}>
+          No se pudo cargar el paciente
+        </Text>
+
+        <Text style={styles.vacio}>
+          {error || 'Paciente no encontrado'}
+        </Text>
+
+        <Pressable
+          style={styles.botonReintentar}
+          onPress={cargarPaciente}
+        >
+          <Text style={styles.textoBoton}>
+            Reintentar
+          </Text>
+        </Pressable>
       </View>
     );
   }
 
   const datos: { etiqueta: string; valor: string }[] = [
     { etiqueta: 'Especie', valor: paciente.especie },
-    { etiqueta: 'Edad', valor: `${paciente.edad} años` },
-    { etiqueta: 'N° de atención', valor: String(paciente.numero_atencion) },
+    { etiqueta: 'Edad', valor: paciente.edad },
+    {
+      etiqueta: 'N° de atención',
+      valor: String(paciente.numero_atencion),
+    },
     { etiqueta: 'Diagnóstico', valor: paciente.diagnostico },
   ];
 
@@ -49,11 +115,19 @@ export default function FichaPaciente() {
         contentContainerStyle={styles.contenedor}
         showsVerticalScrollIndicator={false}
       >
-        <Image
-          source={{ uri: paciente.foto }}
-          style={styles.foto}
-          accessibilityLabel={`Fotografía de ${paciente.nombre}`}
-        />
+        {paciente.foto ? (
+          <Image
+            source={{ uri: paciente.foto }}
+            style={styles.foto}
+            accessibilityLabel={`Fotografía de ${paciente.nombre}`}
+          />
+        ) : (
+          <View style={styles.fotoVacia}>
+            <Text style={styles.vacio}>
+              Sin fotografía disponible
+            </Text>
+          </View>
+        )}
 
         <Text style={styles.nombre}>
           {paciente.nombre}
@@ -117,6 +191,15 @@ const styles = StyleSheet.create({
     borderRadius: Radio.medio,
   },
 
+  fotoVacia: {
+    width: '100%',
+    height: 180,
+    borderRadius: Radio.medio,
+    backgroundColor: Colores.borde,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   nombre: {
     fontSize: TamañoTexto.tituloGrande,
     fontWeight: 'bold',
@@ -159,5 +242,33 @@ const styles = StyleSheet.create({
     fontSize: TamañoTexto.cuerpo,
     textAlign: 'center',
     color: Colores.texto,
+  },
+
+  estado: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Espacio.l,
+    gap: Espacio.m,
+    backgroundColor: Colores.fondo,
+  },
+
+  error: {
+    fontSize: TamañoTexto.cuerpo,
+    fontWeight: 'bold',
+    color: '#C0392B',
+    textAlign: 'center',
+  },
+
+  botonReintentar: {
+    backgroundColor: Colores.primario,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+
+  textoBoton: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
