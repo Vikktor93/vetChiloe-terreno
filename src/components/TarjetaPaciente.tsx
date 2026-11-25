@@ -1,30 +1,98 @@
-import { Paciente } from '@/data/pacientesMock';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-type Props = { paciente: Paciente };
+import { Colores } from '@/constants/colores';
+import { Paciente } from '@/data/pacientesMock';
+import { Link } from 'expo-router';
+
+type Props = {
+  paciente: Paciente;
+};
 
 export default function TarjetaPaciente({ paciente }: Props) {
   return (
-    <View style={styles.tarjeta}>
-      <Image source={{ uri: paciente.foto }} style={styles.foto} />
-      <View style={styles.info}>
-        <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text>{paciente.especie} · {paciente.edad} años</Text>
-        <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
-      </View>
-    </View>
+    <Link
+      href={{
+        pathname: '/paciente/[id]' as any,
+        params: { id: paciente.id },
+      }}
+      asChild
+    >
+      <Pressable
+        style={({ pressed }) => [
+          styles.tarjeta,
+          pressed && styles.presionada,
+        ]}
+      >
+        <Image
+          source={{ uri: paciente.foto }}
+          style={styles.foto}
+        />
+
+        <View style={styles.info}>
+          <Text style={styles.nombre}>
+            {paciente.nombre}
+          </Text>
+
+          <Text style={styles.detalle}>
+            {paciente.especie} · {paciente.edad} años
+          </Text>
+
+          <Text style={styles.atencion}>
+            N° {paciente.numero_atencion}
+          </Text>
+        </View>
+      </Pressable>
+    </Link>
   );
 }
 
 const styles = StyleSheet.create({
   tarjeta: {
-    flexDirection: 'row', alignItems: 'center',
-    gap: 12, padding: 12, borderRadius: 12,
-    backgroundColor: '#fff',
-    borderWidth: 1, borderColor: '#E4DCF2',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colores.tarjeta,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colores.borde,
+    padding: 12,
+    gap: 12,
   },
-  foto: { width: 64, height: 64, borderRadius: 32 },
-  info: { flex: 1 },
-  nombre: { fontSize: 18, fontWeight: 'bold', color: '#6A43A8' },
-  atencion: { color: '#888', fontSize: 12 },
+
+  presionada: {
+    opacity: 0.7,
+  },
+
+  foto: {
+    width: 75,
+    height: 75,
+    borderRadius: 10,
+  },
+
+  info: {
+    flex: 1,
+    gap: 4,
+  },
+
+  nombre: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colores.texto,
+  },
+
+  detalle: {
+    fontSize: 14,
+    color: Colores.textoSecundario,
+  },
+
+  atencion: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colores.primario,
+  },
 });
