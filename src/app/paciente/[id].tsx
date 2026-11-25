@@ -1,16 +1,18 @@
 import Boton from "@/components/Boton";
 import FotoPaciente from "@/components/FotoPaciente";
-import { Colores, Espacio, Radio, Tipografia } from "@/constants/tema";
+import { Colores, Espacio, Radio, Tamano, Tipografia } from "@/constants/tema";
 import { Paciente } from "@/data/pacientesMock";
 import { obtenerPaciente } from "@/services/api";
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator, Alert, ScrollView,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colores.fondo,
   },
   contenedor: {padding: Espacio.l, gap: Espacio.m},
-  foto: {width: "100%", height: 260, borderRadius: Radio.l},
+  foto: {width: "100%", height: Tamano.fotoFicha, borderRadius: Radio.l},
   nombre: {...Tipografia.titulo, color: Colores.primarioOscuro},
   // el diagnostico va destacado en naranja, es lo primero que se mira
   diagnostico: {

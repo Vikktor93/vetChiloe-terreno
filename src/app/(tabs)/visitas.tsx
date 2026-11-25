@@ -1,4 +1,4 @@
-import { Colores, Espacio, Tipografia } from "@/constants/tema";
+import { Colores, Espacio, Tamano, Tipografia } from "@/constants/tema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -8,7 +8,7 @@ export default function Visitas() {
       {/* el icono es decorativo, el lector de pantalla lo salta */}
       <Ionicons
         name="map-outline"
-        size={64}
+        size={Tamano.iconoGrande}
         color={Colores.primario}
         accessibilityElementsHidden
         importantForAccessibility="no"

@@ -1,5 +1,5 @@
 import FotoPaciente from "@/components/FotoPaciente";
-import { Colores, Espacio, Radio, Tipografia } from "@/constants/tema";
+import { Colores, Espacio, Radio, Tamano, Tipografia } from "@/constants/tema";
 import { Paciente } from "@/data/pacientesMock";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -47,7 +47,11 @@ const styles = StyleSheet.create({
     borderColor: Colores.borde,
   },
   presionada: {opacity: 0.7},
-  foto: {width: 64, height: 64, borderRadius: 32},
+  foto: {
+    width: Tamano.foto,
+    height: Tamano.foto,
+    borderRadius: Tamano.foto / 2,
+  },
   info: {flex: 1},
   nombre: {...Tipografia.subtitulo, color: Colores.primarioOscuro},
   datos: {...Tipografia.cuerpo, color: Colores.texto},
