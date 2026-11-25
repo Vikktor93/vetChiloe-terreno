@@ -1,4 +1,4 @@
-import { Colores } from "@/constants/colores";
+import { Colores, Tipografia } from "@/constants/tema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 import { ColorValue } from "react-native";
@@ -15,10 +15,11 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerStyle: {backgroundColor: Colores.primario},
-        headerTintColor: "#fff",
-        tabBarActiveTintColor: Colores.primario,
+        headerStyle: {backgroundColor: Colores.primarioOscuro},
+        headerTintColor: Colores.textoClaro,
+        tabBarActiveTintColor: Colores.primarioOscuro,
         tabBarInactiveTintColor: Colores.textoSecundario,
+        tabBarLabelStyle: {...Tipografia.etiqueta},
         tabBarStyle: {
           backgroundColor: Colores.tarjeta,
           borderTopColor: Colores.borde,

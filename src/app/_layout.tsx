@@ -1,12 +1,12 @@
-import { Colores } from "@/constants/colores";
+import { Colores } from "@/constants/tema";
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {backgroundColor: Colores.primario},
-        headerTintColor: "#fff",
+        headerStyle: {backgroundColor: Colores.primarioOscuro},
+        headerTintColor: Colores.textoClaro,
       }}
     >
       <Stack.Screen name="(tabs)" options={{headerShown: false}} />

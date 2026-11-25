@@ -1,12 +1,21 @@
-import { Colores } from "@/constants/colores";
+import { Colores, Espacio, Tipografia } from "@/constants/tema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Visitas() {
   return (
     <View style={styles.contenedor}>
-      <Ionicons name="map-outline" size={64} color={Colores.primario} />
-      <Text style={styles.titulo}>Visitas a predios</Text>
+      {/* el icono es decorativo, el lector de pantalla lo salta */}
+      <Ionicons
+        name="map-outline"
+        size={64}
+        color={Colores.primario}
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+      />
+      <Text style={styles.titulo} accessibilityRole="header">
+        Visitas a predios
+      </Text>
       <Text style={styles.texto}>Disponible en el Tópico 05</Text>
     </View>
   );
@@ -17,9 +26,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: Espacio.s,
     backgroundColor: Colores.fondo,
   },
-  titulo: {fontSize: 20, fontWeight: "bold", color: Colores.texto},
-  texto: {color: Colores.textoSecundario},
+  titulo: {...Tipografia.titulo, color: Colores.texto},
+  texto: {...Tipografia.cuerpo, color: Colores.textoSecundario},
 });

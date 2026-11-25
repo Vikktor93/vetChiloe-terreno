@@ -1,4 +1,4 @@
-import { Colores } from "@/constants/colores";
+import { Colores, Espacio, Radio, Tipografia } from "@/constants/tema";
 import { Paciente } from "@/data/pacientesMock";
 import { Link } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -11,7 +11,11 @@ export default function TarjetaPaciente({paciente}: Props) {
       href={{pathname: "/paciente/[id]", params: {id: paciente.id}}}
       asChild
     >
-      <Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Ver ficha de ${paciente.nombre}`}
+        accessibilityHint="Abre la ficha clínica"
+      >
         {/* el estilo va en un View adentro, porque Link asChild no pasa bien el style de Pressable */}
         {({pressed}) => (
           <View style={[styles.tarjeta, pressed && styles.presionada]}>
@@ -34,9 +38,9 @@ const styles = StyleSheet.create({
   tarjeta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
+    gap: Espacio.m,
+    padding: Espacio.m,
+    borderRadius: Radio.m,
     backgroundColor: Colores.tarjeta,
     borderWidth: 1,
     borderColor: Colores.borde,
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
   presionada: {opacity: 0.7},
   foto: {width: 64, height: 64, borderRadius: 32},
   info: {flex: 1},
-  nombre: {fontSize: 18, fontWeight: "bold", color: Colores.primarioOscuro},
-  datos: {color: Colores.texto},
-  atencion: {color: Colores.textoSecundario, fontSize: 12},
+  nombre: {...Tipografia.subtitulo, color: Colores.primarioOscuro},
+  datos: {...Tipografia.cuerpo, color: Colores.texto},
+  atencion: {...Tipografia.etiqueta, color: Colores.textoSecundario},
 });

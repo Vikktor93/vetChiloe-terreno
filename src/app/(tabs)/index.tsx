@@ -1,5 +1,11 @@
 import TarjetaPaciente from "@/components/TarjetaPaciente";
-import { Colores } from "@/constants/colores";
+import {
+  Colores,
+  Espacio,
+  Radio,
+  TAMANO_TACTIL,
+  Tipografia,
+} from "@/constants/tema";
 import { pacientesMock } from "@/data/pacientesMock";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
@@ -19,29 +25,35 @@ export default function Pacientes() {
         placeholderTextColor={Colores.textoSecundario}
         value={busqueda}
         onChangeText={setBusqueda}
+        accessibilityLabel="Buscar paciente por nombre"
       />
       <FlatList
         data={filtrados}
         keyExtractor={(p) => p.id.toString()}
         renderItem={({item}) => <TarjetaPaciente paciente={item} />}
-        contentContainerStyle={{gap: 12}}
+        contentContainerStyle={styles.lista}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: {flex: 1, padding: 16, backgroundColor: Colores.fondo},
-  subtitulo: {fontSize: 16, color: Colores.textoSecundario, marginBottom: 12},
+  contenedor: {flex: 1, padding: Espacio.m, backgroundColor: Colores.fondo},
+  subtitulo: {
+    ...Tipografia.cuerpo,
+    color: Colores.textoSecundario,
+    marginBottom: Espacio.m,
+  },
   buscador: {
+    ...Tipografia.cuerpo,
+    minHeight: TAMANO_TACTIL,
     backgroundColor: Colores.tarjeta,
-    borderRadius: 12,
+    borderRadius: Radio.m,
     borderWidth: 1,
     borderColor: Colores.borde,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
+    paddingHorizontal: Espacio.m,
     color: Colores.texto,
-    marginBottom: 16,
+    marginBottom: Espacio.m,
   },
+  lista: {gap: Espacio.m, paddingBottom: Espacio.m},
 });
