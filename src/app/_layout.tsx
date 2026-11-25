@@ -1,9 +1,15 @@
 import { Stack } from 'expo-router';
+import { Colores } from '@/constants/tema';
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'VetChiloé Terreno' }} />
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: Colores.primario },
+        headerTintColor: Colores.tarjeta,
+      }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="paciente/[id]" options={{ title: 'Ficha' }} />
     </Stack>
   );
 }
