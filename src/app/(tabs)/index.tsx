@@ -1,43 +1,33 @@
 import { useState } from 'react';
-import { View, Text, FlatList, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TextInput, RefreshControl, StyleSheet } from 'react-native';
 import TarjetaPaciente from '@/components/TarjetaPaciente';
+import Aparecer from '@/components/Aparecer';
 import Boton from '@/components/Boton';
+import { ListaEsqueleto } from '@/components/Esqueleto';
 import { usePacientes } from '@/hooks/usePacientes';
+import { vibrar } from '@/utils/vibrar';
 import { Colores, Espacio, Radio, Tipografia, TAMANO_TACTIL } from '@/constants/tema';
 
 export default function PacientesScreen() {
   const { pacientes, cargando, error, recargar } = usePacientes();
   const [busqueda, setBusqueda] = useState('');
+  const [deslizando, setDeslizando] = useState(false);
 
   const texto = busqueda.trim().toLowerCase();
   const pacientesFiltrados = pacientes.filter(
     (p) => p.nombre.toLowerCase().includes(texto) || p.especie.toLowerCase().includes(texto)
   );
 
-  // Estado 1: cargando (primera vez; Render puede tardar en despertar)
-  if (cargando && pacientes.length === 0) {
-    return (
-      <View style={styles.centro}>
-        <ActivityIndicator size="large" color={Colores.acento} />
-        <Text style={styles.mensaje}>Cargando pacientes...</Text>
-      </View>
-    );
-  }
+  const primeraCarga = cargando && pacientes.length === 0 && !error;
 
-  // Estado 2: error con Reintentar
-  if (error) {
-    return (
-      <View style={styles.centro}>
-        <Text style={styles.error} accessibilityRole="alert">
-          No se pudieron cargar los pacientes.
-        </Text>
-        <Text style={styles.detalleError}>{error}</Text>
-        <Boton titulo="Reintentar" onPress={recargar} />
-      </View>
-    );
-  }
+  const actualizar = () => {
+    vibrar.seleccion();
+    setDeslizando(true);
+    recargar();
+  };
+  // El indicador de "deslizar" se apaga cuando termina la carga.
+  if (deslizando && !cargando) setDeslizando(false);
 
-  // Estado 3: datos (con vacío, sin resultados y deslizar para actualizar)
   return (
     <View style={styles.contenedor}>
       <Text style={styles.subtitulo}>La clínica, ahora en terreno</Text>
@@ -47,24 +37,61 @@ export default function PacientesScreen() {
         placeholder="Buscar paciente..."
         placeholderTextColor={Colores.textoSecundario}
         autoCapitalize="none"
+        editable={!primeraCarga}
         accessibilityLabel="Buscar paciente por nombre o especie"
         style={styles.buscador}
       />
-      <FlatList
-        data={pacientesFiltrados}
-        keyExtractor={(p) => p.id.toString()}
-        renderItem={({ item }) => <TarjetaPaciente paciente={item} />}
-        contentContainerStyle={styles.lista}
-        refreshing={cargando}
-        onRefresh={recargar}
-        ListEmptyComponent={
-          <Text style={styles.mensaje}>
-            {pacientes.length === 0
-              ? 'No hay pacientes registrados.'
-              : `Sin resultados para «${busqueda.trim()}».`}
+
+      {primeraCarga ? (
+        // Estado 1: cargando (Render puede tardar en despertar)
+        <View>
+          <ListaEsqueleto />
+          <Text style={[styles.mensaje, styles.mensajeCarga]}>
+            Conectando con la clínica...
           </Text>
-        }
-      />
+        </View>
+      ) : error ? (
+        // Estado 2: error con Reintentar
+        <Aparecer desde={0} style={styles.centro}>
+          <Text style={styles.error} accessibilityRole="alert">
+            No se pudieron cargar los pacientes.
+          </Text>
+          <Text style={styles.detalleError}>{error}</Text>
+          <Boton titulo="Reintentar" onPress={recargar} cargando={cargando} />
+        </Aparecer>
+      ) : (
+        // Estado 3: datos (vacío, sin resultados y deslizar para actualizar)
+        <FlatList
+          data={pacientesFiltrados}
+          keyExtractor={(p) => p.id.toString()}
+          renderItem={({ item, index }) => (
+            // Las tarjetas entran escalonadas (solo las primeras 8 esperan)
+            <Aparecer orden={index}>
+              <TarjetaPaciente paciente={item} />
+            </Aparecer>
+          )}
+          contentContainerStyle={styles.lista}
+          keyboardShouldPersistTaps="handled"
+          refreshControl={
+            <RefreshControl
+              refreshing={deslizando}
+              onRefresh={actualizar}
+              tintColor={Colores.acento}
+              colors={[Colores.primario]}
+              progressBackgroundColor={Colores.tarjeta}
+            />
+          }
+          ListEmptyComponent={
+            <Aparecer desde={0}>
+              <Text style={styles.mensaje}>
+                {pacientes.length === 0
+                  ? 'No hay pacientes registrados.'
+                  : `Sin resultados para «${busqueda.trim()}».`}
+              </Text>
+            </Aparecer>
+          }
+        />
+      )}
     </View>
   );
 }
@@ -77,10 +104,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Espacio.l,
     gap: Espacio.m,
-    backgroundColor: Colores.fondo,
   },
   subtitulo: { ...Tipografia.cuerpo, color: Colores.textoSecundario, marginBottom: Espacio.m },
   mensaje: { ...Tipografia.cuerpo, color: Colores.textoSecundario, textAlign: 'center' },
+  mensajeCarga: { marginTop: Espacio.l },
   error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
   detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
   buscador: {

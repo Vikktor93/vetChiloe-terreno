@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, Alert, StyleSheet } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import Aparecer from '@/components/Aparecer';
 import Boton from '@/components/Boton';
+import { FichaEsqueleto } from '@/components/Esqueleto';
+import { vibrar } from '@/utils/vibrar';
 import { Paciente } from '@/data/pacientesMock';
 import { obtenerPaciente } from '@/services/api';
 import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
@@ -22,11 +24,11 @@ export default function FichaPacienteScreen() {
     let activo = true;
     obtenerPaciente(id)
       .then((p) => activo && setResultado({ id, paciente: p }))
-      .catch(
-        (e) =>
-          activo &&
-          setResultado({ id, error: e instanceof Error ? e.message : 'Error desconocido' })
-      );
+      .catch((e) => {
+        if (!activo) return;
+        setResultado({ id, error: e instanceof Error ? e.message : 'Error desconocido' });
+        vibrar.error();
+      });
     return () => {
       activo = false;
     };
@@ -44,7 +46,7 @@ export default function FichaPacienteScreen() {
 
   if (error) {
     return (
-      <View style={styles.centrado}>
+      <Aparecer desde={0} style={styles.centrado}>
         <Stack.Screen options={{ title: 'Ficha del Paciente' }} />
         <Text style={styles.error} accessibilityRole="alert">
           No se pudo cargar la ficha.
@@ -52,21 +54,20 @@ export default function FichaPacienteScreen() {
         <Text style={styles.detalleError}>{error}</Text>
         <Boton titulo="Reintentar" onPress={reintentar} />
         <Boton titulo="Volver" variante="secundario" onPress={() => router.back()} />
-      </View>
+      </Aparecer>
     );
   }
 
   if (!paciente) {
     return (
-      <View style={styles.centrado}>
-        <ActivityIndicator size="large" color={Colores.acento} />
-        <Text style={styles.mensaje}>Cargando ficha...</Text>
+      <View style={styles.pantalla}>
+        <FichaEsqueleto />
       </View>
     );
   }
 
   const registrarVisita = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    vibrar.exito();
     Alert.alert('Próximamente', 'Disponible en el Tópico 05');
   };
 
@@ -74,13 +75,16 @@ export default function FichaPacienteScreen() {
     <View style={styles.pantalla}>
       <Stack.Screen options={{ title: paciente.nombre }} />
       <ScrollView contentContainerStyle={styles.contenido}>
-        <Image
-          source={{ uri: paciente.foto }}
-          style={styles.foto}
-          resizeMode="cover"
-          accessibilityLabel={`Foto de ${paciente.nombre}`}
-        />
-        <View style={styles.card}>
+        {/* Entrada escalonada: foto -> datos -> botón (sube desde la zona del pulgar) */}
+        <Aparecer orden={0}>
+          <Image
+            source={{ uri: paciente.foto }}
+            style={styles.foto}
+            resizeMode="cover"
+            accessibilityLabel={`Foto de ${paciente.nombre}`}
+          />
+        </Aparecer>
+        <Aparecer orden={1} style={styles.card}>
           <Text style={styles.nombre} accessibilityRole="header">
             {paciente.nombre}
           </Text>
@@ -92,17 +96,20 @@ export default function FichaPacienteScreen() {
           <Text style={styles.valor}>{paciente.edad} años</Text>
           <Text style={styles.etiqueta}>Diagnóstico / Motivo</Text>
           <Text style={styles.valor}>{paciente.diagnostico}</Text>
-        </View>
+        </Aparecer>
       </ScrollView>
 
       {/* Acción principal fija abajo: zona del pulgar */}
-      <View style={[styles.acciones, { paddingBottom: insets.bottom + Espacio.m }]}>
+      <Aparecer
+        orden={2}
+        desde={24}
+        style={[styles.acciones, { paddingBottom: insets.bottom + Espacio.m }]}>
         <Boton
           titulo="Registrar visita"
           onPress={registrarVisita}
           accessibilityHint={`Registra una visita para ${paciente.nombre}`}
         />
-      </View>
+      </Aparecer>
     </View>
   );
 }
@@ -118,10 +125,9 @@ const styles = StyleSheet.create({
     gap: Espacio.m,
     backgroundColor: Colores.fondo,
   },
-  mensaje: { ...Tipografia.cuerpo, color: Colores.textoSecundario, textAlign: 'center' },
   error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
   detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
-  foto: { width: '100%', height: 220, borderRadius: Radio.l },
+  foto: { width: '100%', height: 220, borderRadius: Radio.l, backgroundColor: Colores.esqueleto },
   card: {
     backgroundColor: Colores.tarjeta,
     borderRadius: Radio.l,

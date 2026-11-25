@@ -1,11 +1,15 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colores } from '@/constants/tema';
+import { vibrar } from '@/utils/vibrar';
 
 export default function TabsLayout() {
   return (
     <Tabs
+      // Vibración leve al cambiar de pestaña
+      screenListeners={{ tabPress: () => vibrar.seleccion() }}
       screenOptions={{
+        animation: 'shift',
         headerStyle: { backgroundColor: Colores.tarjeta },
         headerTintColor: Colores.texto,
         headerShadowVisible: false,

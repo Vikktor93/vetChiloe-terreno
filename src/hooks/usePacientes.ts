@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { obtenerPacientes } from '@/services/api';
+import { vibrar } from '@/utils/vibrar';
 import { Paciente } from '@/data/pacientesMock';
 
 // Hook propio: empaqueta los tres estados de la petición (cargando, error, datos).
@@ -20,7 +21,9 @@ export function usePacientes() {
         setError(null);
       })
       .catch((e) => {
-        if (activo) setError(e instanceof Error ? e.message : 'Error desconocido');
+        if (!activo) return;
+        setError(e instanceof Error ? e.message : 'Error desconocido');
+        vibrar.error(); // el teléfono avisa que algo falló
       })
       .finally(() => {
         if (activo) setCargando(false);

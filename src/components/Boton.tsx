@@ -1,4 +1,6 @@
-import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, StyleSheet } from 'react-native';
+import Aparecer from '@/components/Aparecer';
+import Presionable from '@/components/Presionable';
 import { Colores, Espacio, Radio, Tipografia, TAMANO_TACTIL } from '@/constants/tema';
 
 type Props = {
@@ -8,6 +10,17 @@ type Props = {
   deshabilitado?: boolean;
   cargando?: boolean;
   accessibilityHint?: string;
+};
+
+const COLORES = {
+  primario: {
+    fondo: { normal: Colores.primario, activo: Colores.primarioActivo },
+    borde: { normal: Colores.primario, activo: Colores.primarioActivo },
+  },
+  secundario: {
+    fondo: { normal: 'rgba(255, 92, 168, 0)', activo: Colores.acentoSuave },
+    borde: { normal: Colores.acento, activo: Colores.acento },
+  },
 };
 
 export default function Boton({
@@ -20,28 +33,32 @@ export default function Boton({
 }: Props) {
   const primario = variante === 'primario';
   const inactivo = deshabilitado || cargando;
+  const colores = COLORES[variante];
 
   return (
-    <Pressable
+    <Presionable
       onPress={onPress}
       disabled={inactivo}
       hitSlop={8}
+      vibracion={primario ? 'toque' : 'seleccion'}
+      fondo={colores.fondo}
+      borde={colores.borde}
       accessibilityRole="button"
       accessibilityLabel={titulo}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: inactivo, busy: cargando }}
-      style={({ pressed }) => [
-        styles.base,
-        primario ? styles.primario : styles.secundario,
-        pressed && styles.presionado,
-        deshabilitado && styles.deshabilitado,
-      ]}>
+      style={[styles.base, deshabilitado && styles.deshabilitado]}>
+      {/* Cruce suave entre el texto y el indicador de carga */}
       {cargando ? (
-        <ActivityIndicator color={primario ? Colores.textoSobrePrimario : Colores.acento} />
+        <Aparecer key="cargando" desde={0}>
+          <ActivityIndicator color={primario ? Colores.textoSobrePrimario : Colores.acento} />
+        </Aparecer>
       ) : (
-        <Text style={[styles.texto, !primario && styles.textoSecundario]}>{titulo}</Text>
+        <Aparecer key="texto" desde={0}>
+          <Text style={[styles.texto, !primario && styles.textoSecundario]}>{titulo}</Text>
+        </Aparecer>
       )}
-    </Pressable>
+    </Presionable>
   );
 }
 
@@ -49,13 +66,11 @@ const styles = StyleSheet.create({
   base: {
     minHeight: TAMANO_TACTIL,
     borderRadius: Radio.m,
+    borderWidth: 2,
     paddingHorizontal: Espacio.l,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primario: { backgroundColor: Colores.primario },
-  secundario: { borderWidth: 2, borderColor: Colores.acento, backgroundColor: 'transparent' },
-  presionado: { opacity: 0.7 },
   deshabilitado: { opacity: 0.4 },
   texto: { ...Tipografia.subtitulo, color: Colores.textoSobrePrimario },
   textoSecundario: { color: Colores.acento },
