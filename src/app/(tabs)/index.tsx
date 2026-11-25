@@ -10,7 +10,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TarjetaPaciente from '@/components/TarjetaPaciente';
 import Aparecer from '@/components/Aparecer';
-import Boton from '@/components/Boton';
+import MensajeEstado from '@/components/MensajeEstado';
 import Buscador from '@/components/Buscador';
 import FiltroEspecie from '@/components/FiltroEspecie';
 import { ListaEsqueleto } from '@/components/Esqueleto';
@@ -85,7 +85,9 @@ export default function PacientesScreen() {
         <Text style={styles.subtitulo}>
           {primeraCarga
             ? 'Conectando con la clínica...'
-            : `La clínica, ahora en terreno · ${pacientes.length} pacientes`}
+            : error
+              ? 'La clínica, ahora en terreno · servicio no disponible'
+              : `La clínica, ahora en terreno · ${pacientes.length} pacientes`}
         </Text>
       </Animated.View>
       <Buscador valor={busqueda} onCambiar={setBusqueda} editable={!primeraCarga} />
@@ -102,12 +104,32 @@ export default function PacientesScreen() {
     </View>
   );
 
+  const limpiarFiltros = () => {
+    setBusqueda('');
+    setEspecie(TODOS);
+  };
+
+  // Lista vacía: ¿la API no tiene pacientes, o el filtro no encontró nada?
   const vacio =
-    pacientes.length === 0
-      ? 'No hay pacientes registrados.'
-      : busqueda.trim()
-        ? `Sin resultados para «${busqueda.trim()}».`
-        : `No hay pacientes de especie ${especie}.`;
+    pacientes.length === 0 ? (
+      <MensajeEstado
+        tipo="vacio"
+        titulo="Aún no hay pacientes"
+        mensaje="La API respondió bien, pero la clínica todavía no tiene pacientes registrados. Cuando se agreguen desde vetChiloé web aparecerán aquí."
+        accion={{ titulo: 'Actualizar', onPress: actualizar }}
+      />
+    ) : (
+      <MensajeEstado
+        tipo="sin-resultados"
+        titulo="Sin resultados"
+        mensaje={
+          busqueda.trim()
+            ? `Ningún paciente coincide con «${busqueda.trim()}»${especie !== TODOS ? ` en ${especie}` : ''}.`
+            : `No hay pacientes de especie ${especie}.`
+        }
+        accion={{ titulo: 'Limpiar búsqueda', onPress: limpiarFiltros }}
+      />
+    );
 
   return (
     <View style={[styles.pantalla, { paddingTop: insets.top }]}>
@@ -127,13 +149,13 @@ export default function PacientesScreen() {
       ) : error ? (
         <View style={styles.contenido}>
           {cabecera}
-          <Aparecer desde={0} style={styles.centro}>
-            <Text style={styles.error} accessibilityRole="alert">
-              No se pudieron cargar los pacientes.
-            </Text>
-            <Text style={styles.detalleError}>{error}</Text>
-            <Boton titulo="Reintentar" onPress={recargar} cargando={cargando} />
-          </Aparecer>
+          <MensajeEstado
+            tipo={error.tipo}
+            titulo={error.titulo}
+            mensaje={error.mensaje}
+            detalle={error.detalle}
+            accion={{ titulo: 'Reintentar', onPress: recargar, cargando }}
+          />
         </View>
       ) : (
         <Animated.FlatList<Paciente>
@@ -159,11 +181,7 @@ export default function PacientesScreen() {
               progressBackgroundColor={Colores.tarjeta}
             />
           }
-          ListEmptyComponent={
-            <Aparecer desde={0}>
-              <Text style={styles.mensaje}>{vacio}</Text>
-            </Aparecer>
-          }
+          ListEmptyComponent={vacio}
         />
       )}
     </View>
@@ -202,8 +220,4 @@ const styles = StyleSheet.create({
     backgroundColor: Colores.acentoSuave,
     overflow: 'hidden',
   },
-  centro: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Espacio.m, padding: Espacio.l },
-  mensaje: { ...Tipografia.cuerpo, color: Colores.textoSecundario, textAlign: 'center', marginTop: Espacio.xl },
-  error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
-  detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
 });

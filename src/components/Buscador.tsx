@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: TAMANO_TACTIL,
     color: Colores.texto,
+    outlineWidth: 0, // en web: el borde animado de la caja ya marca el foco
   },
   borrar: {
     minWidth: 32,

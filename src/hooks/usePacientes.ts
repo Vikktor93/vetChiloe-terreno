@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { obtenerPacientes } from '@/services/api';
+import { describirError, type ErrorApp } from '@/services/errores';
 import { vibrar } from '@/utils/vibrar';
 import { Paciente } from '@/data/pacientesMock';
 
@@ -7,7 +8,7 @@ import { Paciente } from '@/data/pacientesMock';
 export function usePacientes() {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorApp | null>(null);
   const [intento, setIntento] = useState(0);
 
   // Se ejecuta al abrir la pantalla y cada vez que se pide recargar.
@@ -22,7 +23,7 @@ export function usePacientes() {
       })
       .catch((e) => {
         if (!activo) return;
-        setError(e instanceof Error ? e.message : 'Error desconocido');
+        setError(describirError(e));
         vibrar.error(); // el teléfono avisa que algo falló
       })
       .finally(() => {

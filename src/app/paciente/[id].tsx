@@ -20,6 +20,8 @@ import { vibrar } from '@/utils/vibrar';
 import { Paciente } from '@/data/pacientesMock';
 import { obtenerPaciente } from '@/services/api';
 import { formatearEdad } from '@/utils/formato';
+import { describirError, type ErrorApp } from '@/services/errores';
+import MensajeEstado from '@/components/MensajeEstado';
 import {
   Colores,
   Encabezado,
@@ -29,7 +31,7 @@ import {
   TAMANO_TACTIL,
 } from '@/constants/tema';
 
-type Resultado = { id: string; paciente?: Paciente; error?: string };
+type Resultado = { id: string; paciente?: Paciente; error?: ErrorApp };
 
 const ALTO_FOTO = Encabezado.alturaFoto;
 
@@ -79,7 +81,7 @@ export default function FichaPacienteScreen() {
       .then((p) => activo && setResultado({ id, paciente: p }))
       .catch((e) => {
         if (!activo) return;
-        setResultado({ id, error: e instanceof Error ? e.message : 'Error desconocido' });
+        setResultado({ id, error: describirError(e) });
         vibrar.error();
       });
     return () => {
@@ -143,14 +145,25 @@ export default function FichaPacienteScreen() {
       <View style={styles.pantalla}>
         <Stack.Screen options={{ headerShown: false }} />
         <BotonVolver top={insets.top} />
-        <Aparecer desde={0} style={styles.centrado}>
-          <Ionicons name="cloud-offline-outline" size={48} color={Colores.alerta} />
-          <Text style={styles.error} accessibilityRole="alert">
-            No se pudo cargar la ficha.
-          </Text>
-          <Text style={styles.detalleError}>{error}</Text>
-          <Boton titulo="Reintentar" onPress={reintentar} />
-        </Aparecer>
+        <View style={styles.centrado}>
+          <MensajeEstado
+            tipo={error.tipo}
+            titulo={error.titulo}
+            mensaje={error.mensaje}
+            detalle={error.detalle}
+            // Si el paciente no existe, reintentar no sirve: mejor volver.
+            accion={
+              error.tipo === 'no-encontrado'
+                ? { titulo: 'Volver a la lista', onPress: () => router.back() }
+                : { titulo: 'Reintentar', onPress: reintentar }
+            }
+            accionSecundaria={
+              error.tipo === 'no-encontrado'
+                ? undefined
+                : { titulo: 'Volver', onPress: () => router.back() }
+            }
+          />
+        </View>
       </View>
     );
   }
@@ -256,8 +269,6 @@ const styles = StyleSheet.create({
     padding: Espacio.l,
     gap: Espacio.m,
   },
-  error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
-  detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
 
   marcoFoto: { height: ALTO_FOTO, overflow: 'visible' },
   foto: { width: '100%', height: ALTO_FOTO, backgroundColor: Colores.esqueleto },
