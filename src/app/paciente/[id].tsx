@@ -1,10 +1,13 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colores } from '@/constants/colores';
+import Boton from '@/components/Boton';
+import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 import { pacientesMock } from '@/data/pacientesMock';
 
 export default function FichaPaciente() {
+  const insets = useSafeAreaInsets(); // antes de cualquier return
   const { id } = useLocalSearchParams<{ id: string }>();
   const paciente = pacientesMock.find((item) => item.id === Number(id));
 
@@ -25,61 +28,89 @@ export default function FichaPaciente() {
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.contenedor}>
+    <View style={styles.pantalla}>
       <Stack.Screen options={{ title: paciente.nombre }} />
-      <Image
-        source={{ uri: paciente.foto }}
-        style={styles.foto}
-        accessibilityLabel={`Foto de ${paciente.nombre}`}
-      />
-      <Text style={styles.nombre}>{paciente.nombre}</Text>
-      {detalles.map(({ etiqueta, valor }) => (
-        <View key={etiqueta} style={styles.fila}>
-          <Text style={styles.etiqueta}>{etiqueta}</Text>
-          <Text style={styles.valor}>{valor}</Text>
-        </View>
-      ))}
-    </ScrollView>
+      <ScrollView contentContainerStyle={styles.contenedor}>
+        <Image
+          source={{ uri: paciente.foto }}
+          style={styles.foto}
+          accessibilityLabel={`Foto de ${paciente.nombre}`}
+        />
+        <Text style={styles.nombre} accessibilityRole="header">
+          {paciente.nombre}
+        </Text>
+        {detalles.map(({ etiqueta, valor }) => (
+          <View
+            key={etiqueta}
+            style={styles.fila}
+            accessible
+            accessibilityLabel={`${etiqueta}: ${valor}`}
+          >
+            <Text style={styles.etiqueta}>{etiqueta}</Text>
+            <Text style={styles.valor}>{valor}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      <View style={[styles.acciones, { paddingBottom: insets.bottom + Espacio.m }]}>
+        <Boton
+          titulo="Registrar visita"
+          accessibilityHint={`Registra una visita de ${paciente.nombre}`}
+          onPress={() => Alert.alert('Próximamente', 'Disponible en el Tópico 05')}
+        />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  pantalla: {
+    flex: 1,
+    backgroundColor: Colores.fondo,
+  },
   contenedor: {
     flexGrow: 1,
-    padding: 20,
-    gap: 12,
+    padding: Espacio.l,
+    gap: Espacio.m,
     backgroundColor: Colores.fondo,
   },
   foto: {
     width: '100%',
     height: 260,
-    borderRadius: 16,
+    borderRadius: Radio.l,
     backgroundColor: Colores.borde,
   },
   nombre: {
+    ...Tipografia.titulo,
     color: Colores.primario,
-    fontSize: 26,
-    fontWeight: 'bold',
   },
   fila: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: Colores.tarjeta,
-    padding: 14,
-    borderRadius: 12,
+    padding: Espacio.m,
+    borderRadius: Radio.m,
   },
   etiqueta: {
+    ...Tipografia.etiqueta,
     color: Colores.textoSecundario,
   },
   valor: {
+    ...Tipografia.cuerpo,
     flexShrink: 1,
-    marginLeft: 12,
+    marginLeft: Espacio.m,
     color: Colores.texto,
     fontWeight: '600',
   },
   noEncontrado: {
-    padding: 20,
+    ...Tipografia.cuerpo,
+    padding: Espacio.l,
     color: Colores.texto,
     textAlign: 'center',
+  },
+  acciones: {
+    padding: Espacio.m,
+    backgroundColor: Colores.tarjeta,
+    borderTopWidth: 1,
+    borderColor: Colores.borde,
   },
 });

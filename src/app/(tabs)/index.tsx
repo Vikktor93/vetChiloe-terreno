@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import TarjetaPaciente from '@/components/TarjetaPaciente';
-import { Colores } from '@/constants/colores';
+import { Colores, Espacio, Radio, TAMANO_TACTIL, Tipografia } from '@/constants/tema';
 import { pacientesMock } from '@/data/pacientesMock';
 
 export default function Pacientes() {
@@ -38,31 +38,34 @@ export default function Pacientes() {
 const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
-    padding: 16,
+    padding: Espacio.m,
     backgroundColor: Colores.fondo,
   },
   subtitulo: {
-    fontSize: 16,
+    ...Tipografia.cuerpo,
     color: Colores.textoSecundario,
-    marginBottom: 16,
+    marginBottom: Espacio.m,
   },
   buscador: {
     backgroundColor: Colores.tarjeta,
-    borderRadius: 12,
+    borderRadius: Radio.m,
     borderWidth: 1,
     borderColor: Colores.borde,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
+    minHeight: TAMANO_TACTIL,
+    paddingHorizontal: Espacio.m,
+    paddingVertical: Espacio.s,
+    ...Tipografia.cuerpo,
     color: Colores.texto,
-    marginBottom: 16,
+    marginBottom: Espacio.m,
   },
   lista: {
-    gap: 12,
+    gap: Espacio.m,
+    paddingBottom: Espacio.m,
   },
   sinResultados: {
+    ...Tipografia.cuerpo,
     color: Colores.textoSecundario,
     textAlign: 'center',
-    padding: 16,
+    padding: Espacio.m,
   },
 });

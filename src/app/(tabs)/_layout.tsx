@@ -2,25 +2,27 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
 
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 
 type Icono = keyof typeof Ionicons.glyphMap;
 
 const icono = (nombre: Icono) =>
-  ({ color, size }: { color: ColorValue | null; size: number }) => (
-    <Ionicons
-      name={nombre}
-      size={size}
-      color={typeof color === 'number' ? Colores.primario : color ?? Colores.primario}
-    />
-  );
+  function IconoPestana({ color, size }: { color: ColorValue | null; size: number }) {
+    return (
+      <Ionicons
+        name={nombre}
+        size={size}
+        color={typeof color === 'number' ? Colores.primario : color ?? Colores.primario}
+      />
+    );
+  };
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         headerStyle: { backgroundColor: Colores.primario },
-        headerTintColor: '#fff',
+        headerTintColor: Colores.textoSobrePrimario,
         tabBarActiveTintColor: Colores.primario,
         tabBarStyle: {
           backgroundColor: Colores.tarjeta,

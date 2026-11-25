@@ -1,7 +1,7 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Link } from 'expo-router';
 
-import { Colores } from '@/constants/colores';
+import { Colores, Espacio, Radio, TAMANO_TACTIL, Tipografia } from '@/constants/tema';
 import type { Paciente } from '@/data/pacientesMock';
 
 type Props = {
@@ -20,7 +20,8 @@ export default function TarjetaPaciente({ paciente }: Props) {
           pressed && styles.presionada,
         ]}
         accessibilityRole="button"
-        accessibilityLabel={`Ver ficha de ${paciente.nombre}`}
+        accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad} años`}
+        accessibilityHint="Abre la ficha clínica"
       >
         <Image
           source={{ uri: paciente.foto }}
@@ -43,9 +44,10 @@ const styles = StyleSheet.create({
   tarjeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
+    gap: Espacio.m,
+    padding: Espacio.m,
+    minHeight: TAMANO_TACTIL,
+    borderRadius: Radio.m,
     backgroundColor: Colores.tarjeta,
     borderWidth: 1,
     borderColor: Colores.borde,
@@ -56,22 +58,22 @@ const styles = StyleSheet.create({
   foto: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: Radio.completo,
     backgroundColor: Colores.borde,
   },
   info: {
     flex: 1,
   },
   nombre: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    ...Tipografia.subtitulo,
     color: Colores.primario,
   },
   detalle: {
+    ...Tipografia.cuerpo,
     color: Colores.texto,
   },
   atencion: {
+    ...Tipografia.etiqueta,
     color: Colores.textoSecundario,
-    fontSize: 12,
   },
 });
