@@ -1,22 +1,52 @@
-import { View, Text, Image, ScrollView, Alert, StyleSheet } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View, Text, Image, ScrollView, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import Boton from '@/components/Boton';
-import { pacientesMock } from '@/data/pacientesMock';
+import { Paciente } from '@/data/pacientesMock';
+import { obtenerPaciente } from '@/services/api';
 import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 
 export default function FichaPacienteScreen() {
   const insets = useSafeAreaInsets(); // antes de cualquier return
   const { id } = useLocalSearchParams<{ id: string }>();
-  const paciente = pacientesMock.find((p) => p.id.toString() === id);
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [intento, setIntento] = useState(0);
+
+  // GET /api/pacientes/:id cada vez que cambia el id (o se reintenta)
+  useEffect(() => {
+    let activo = true;
+    setError(null);
+    setPaciente(null);
+    obtenerPaciente(id)
+      .then((p) => activo && setPaciente(p))
+      .catch((e) => activo && setError(e instanceof Error ? e.message : 'Error desconocido'));
+    return () => {
+      activo = false;
+    };
+  }, [id, intento]);
+
+  if (error) {
+    return (
+      <View style={styles.centrado}>
+        <Stack.Screen options={{ title: 'Ficha del Paciente' }} />
+        <Text style={styles.error} accessibilityRole="alert">
+          No se pudo cargar la ficha.
+        </Text>
+        <Text style={styles.detalleError}>{error}</Text>
+        <Boton titulo="Reintentar" onPress={() => setIntento((n) => n + 1)} />
+        <Boton titulo="Volver" variante="secundario" onPress={() => router.back()} />
+      </View>
+    );
+  }
 
   if (!paciente) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.error} accessibilityRole="alert">
-          Paciente no encontrado
-        </Text>
+        <ActivityIndicator size="large" color={Colores.acento} />
+        <Text style={styles.mensaje}>Cargando ficha...</Text>
       </View>
     );
   }
@@ -70,11 +100,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Espacio.m,
+    padding: Espacio.l,
     gap: Espacio.m,
     backgroundColor: Colores.fondo,
   },
-  error: { ...Tipografia.cuerpo, fontWeight: '700', color: Colores.alerta, textAlign: 'center' },
+  mensaje: { ...Tipografia.cuerpo, color: Colores.textoSecundario, textAlign: 'center' },
+  error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
+  detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
   foto: { width: '100%', height: 220, borderRadius: Radio.l },
   card: {
     backgroundColor: Colores.tarjeta,
