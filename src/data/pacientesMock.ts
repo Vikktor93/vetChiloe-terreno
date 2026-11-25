@@ -3,7 +3,7 @@ export type Paciente = {
   nombre: string;
   numero_atencion: string;
   especie: string;
-  edad: number;
+  edad: number | string; // la API la entrega como texto ("8")
   diagnostico: string;
   foto: string; // URL de la imagen
 };
