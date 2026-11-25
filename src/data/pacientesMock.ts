@@ -1,12 +1,6 @@
-export type Paciente = {
-  id: number;
-  nombre: string;
-  numero_atencion: string;
-  especie: string;
-  edad: number;
-  diagnostico: string;
-  foto: string;
-};
+import type { Paciente } from '@/types/paciente';
+
+export type { Paciente };
 
 export const pacientesMock: Paciente[] = [
   {
