@@ -36,6 +36,11 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## Rules
 
+- Before writing or reviewing code, read `CODING_STANDARDS.md` for repository-specific code rules; update it when a change establishes or retires a rule.
+- Before reviewing code, read `REVIEW.md` for this repository's review policy; update it when a change establishes or retires a review rule.
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+- Documented solutions live in `docs/solutions/`, organized by category with YAML frontmatter (`module`, `tags`, `problem_type`); consult relevant entries when implementing or debugging a documented area.
+- Write every report, summary, or handoff to the user through the `ce-noslop` skill. This applies when you are the top-level agent writing to the user, not when you are a subagent reporting to its caller. Do not apply it to code, config, verbatim quotes, or text the user asked to post as written.

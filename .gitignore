@@ -45,3 +45,7 @@ example
 #LLM
 AGENTS.md
 .claude/
+
+# Compound Engineering
+.context/compound-engineering/
+.vercel
