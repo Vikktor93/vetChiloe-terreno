@@ -1,6 +1,7 @@
 import { View, Text, Image, Pressable, StyleSheet } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
-import { Paciente } from "@/data/pacientesMock";
+import type { Paciente } from "@/types/paciente";
 import {
   Colores,
   Espacio,
@@ -23,7 +24,17 @@ export default function TarjetaPaciente({ paciente }: Props) {
         accessibilityHint="Abre la ficha clínica del paciente"
         style={({ pressed }) => [styles.tarjeta, pressed && styles.presionada]}
       >
-        <Image source={{ uri: paciente.foto }} style={styles.foto} />
+        {paciente.foto ? (
+          <Image source={{ uri: paciente.foto }} style={styles.foto} />
+        ) : (
+          <View style={[styles.foto, styles.fotoVacia]}>
+            <Ionicons
+              name="paw"
+              size={TAMANO_TACTIL / 2}
+              color={Colores.textoSecundario}
+            />
+          </View>
+        )}
         <View style={styles.info}>
           <Text style={styles.nombre}>{paciente.nombre}</Text>
           <Text style={styles.detalle}>
@@ -49,6 +60,11 @@ const styles = StyleSheet.create({
     borderColor: Colores.borde,
   },
   foto: { width: TAMANO_TACTIL, height: TAMANO_TACTIL, borderRadius: Radio.m },
+  fotoVacia: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colores.fondo,
+  },
   info: { flex: 1, gap: Espacio.xs },
   nombre: { ...Tipografia.subtitulo, color: Colores.primario },
   detalle: { ...Tipografia.cuerpo, color: Colores.texto },
