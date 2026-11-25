@@ -13,5 +13,9 @@ async function pedir<T>(ruta: string): Promise<T> {
 export const obtenerPacientes = () =>
   pedir<Paciente[]>('/api/pacientes');
 
-export const obtenerPaciente = (id: string) =>
-  pedir<Paciente>(`/api/pacientes/${id}`);
+// La API de la web no tiene GET /api/pacientes/:id: se busca el paciente en la lista.
+export async function obtenerPaciente(id: string): Promise<Paciente> {
+  const paciente = (await obtenerPacientes()).find((p) => String(p.id) === id);
+  if (!paciente) throw new Error('Paciente no encontrado');
+  return paciente;
+}
