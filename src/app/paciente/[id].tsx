@@ -1,23 +1,56 @@
-import { ScrollView, View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Animated,
+} from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { pacientesMock } from '@/data/pacientesMock';
-import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
+import {
+  Colores,
+  Espaciado,
+  Radios,
+  Tamanos,
+  Tipografia,
+} from '@/constants/tema';
 import Boton from '@/components/Boton';
 
 export default function FichaPaciente() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
   const paciente = pacientesMock.find((p) => p.id === Number(id));
 
+  const [visitaIniciada, setVisitaIniciada] = useState(false);
+  const animacionToast = useRef(new Animated.Value(0)).current;
+
   if (!paciente) {
-    return (
-      <Text style={styles.vacio}>Paciente no encontrado</Text>
-    );
+    return <Text style={styles.vacio}>Paciente no encontrado</Text>;
   }
 
   const registrarVisita = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert('Visita registrada', `Se inició la visita de ${paciente.nombre}.`);
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setVisitaIniciada(true);
+
+    Animated.spring(animacionToast, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 7,
+      tension: 60,
+    }).start();
+
+    setTimeout(() => {
+      Animated.timing(animacionToast, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => setVisitaIniciada(false));
+    }, 3200);
   };
 
   return (
@@ -35,7 +68,7 @@ export default function FichaPaciente() {
         {[
           ['Especie', paciente.especie],
           ['Edad', `${paciente.edad} años`],
-          ['N° de atención', paciente.numero_atencion],
+          ['N° de atención', String(paciente.numero_atencion)],
           ['Diagnóstico', paciente.diagnostico],
         ].map(([etiqueta, valor]) => (
           <View key={etiqueta} style={styles.fila}>
@@ -45,9 +78,55 @@ export default function FichaPaciente() {
         ))}
       </ScrollView>
 
-      <View style={styles.zonaPulgar}>
+      {visitaIniciada && (
+        <Animated.View
+          accessibilityLiveRegion="polite"
+          style={[
+            styles.toast,
+            {
+              opacity: animacionToast,
+              transform: [
+                {
+                  translateY: animacionToast.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [24, 0],
+                  }),
+                },
+                {
+                  scale: animacionToast.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.95, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.toastIcono}>
+            <Ionicons
+              name="checkmark-circle"
+              size={Tamanos.iconoToast}
+              color={Colores.blanco}
+            />
+          </View>
+          <View style={styles.toastTextos}>
+            <Text style={styles.toastTitulo}>¡Visita iniciada!</Text>
+            <Text style={styles.toastSubtitulo}>
+              Atendiendo en terreno a {paciente.nombre}
+            </Text>
+          </View>
+        </Animated.View>
+      )}
+
+      <View
+        style={[
+          styles.zonaPulgar,
+          { paddingBottom: Math.max(insets.bottom, Espaciado.lg) + Espaciado.md },
+        ]}
+      >
         <Boton
           titulo="Registrar visita"
+          icono="clipboard-outline"
           onPress={registrarVisita}
           accessibilityLabel={`Registrar visita para ${paciente.nombre}`}
         />
@@ -63,25 +142,29 @@ const styles = StyleSheet.create({
   },
   contenedor: {
     flexGrow: 1,
-    padding: 20,
+    padding: Espaciado.xl,
+    paddingBottom: Espaciado.xxxl,
     gap: Espaciado.md,
   },
   foto: {
     width: '100%',
-    height: 260,
-    borderRadius: 16,
+    height: Tamanos.fotoFicha,
+    borderRadius: Radios.lg,
   },
   nombre: {
-    fontSize: 26,
+    fontSize: Tipografia.destacado,
     fontWeight: 'bold',
     color: Colores.primario,
   },
   fila: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: Colores.tarjeta,
-    padding: 14,
+    padding: Espaciado.tarjeta,
     borderRadius: Radios.md,
+    borderWidth: 1,
+    borderColor: Colores.borde,
   },
   etiqueta: {
     fontSize: Tipografia.cuerpo,
@@ -93,14 +176,50 @@ const styles = StyleSheet.create({
     color: Colores.texto,
   },
   vacio: {
-    padding: 20,
+    padding: Espaciado.xl,
     textAlign: 'center',
-    fontSize: Tipografia.subtitulo,
+    fontSize: Tipografia.cuerpo,
     color: Colores.textoSecundario,
   },
+  toast: {
+    marginHorizontal: Espaciado.lg,
+    marginBottom: Espaciado.md,
+    padding: Espaciado.tarjeta,
+    borderRadius: Radios.lg,
+    backgroundColor: Colores.primarioOscuro,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Espaciado.md,
+    shadowColor: Colores.primarioOscuro,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  toastIcono: {
+    width: Tamanos.iconoPantalla,
+    height: Tamanos.iconoPantalla,
+    borderRadius: Radios.circular,
+    backgroundColor: Colores.primario,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toastTextos: {
+    flex: 1,
+  },
+  toastTitulo: {
+    fontSize: Tipografia.cuerpo,
+    fontWeight: 'bold',
+    color: Colores.blanco,
+  },
+  toastSubtitulo: {
+    fontSize: Tipografia.pequeno,
+    color: Colores.fondo,
+    marginTop: Espaciado.xs,
+  },
   zonaPulgar: {
-    padding: 16,
-    paddingBottom: 24,
+    paddingHorizontal: Espaciado.xl,
+    paddingTop: Espaciado.tarjeta,
     backgroundColor: Colores.tarjeta,
     borderTopWidth: 1,
     borderTopColor: Colores.borde,

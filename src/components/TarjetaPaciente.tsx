@@ -1,7 +1,13 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { Paciente } from '@/data/pacientesMock';
-import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
+import {
+  Colores,
+  Espaciado,
+  Radios,
+  Tamanos,
+  Tipografia,
+} from '@/constants/tema';
 
 type Props = {
   paciente: Paciente;
@@ -41,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     gap: Espaciado.md,
-    padding: 14,
+    padding: Espaciado.tarjeta,
     borderRadius: Radios.lg,
     backgroundColor: Colores.tarjeta,
     borderWidth: 1,
@@ -57,31 +63,31 @@ const styles = StyleSheet.create({
     backgroundColor: Colores.fondo,
   },
   foto: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: Tamanos.avatarTarjeta,
+    height: Tamanos.avatarTarjeta,
+    borderRadius: Radios.circular,
     backgroundColor: Colores.fondo,
   },
   info: {
     flex: 1,
   },
   nombre: {
-    fontSize: Tipografia.titulo, // 18
+    fontSize: Tipografia.titulo,
     fontWeight: 'bold',
     color: Colores.primario,
   },
   detalles: {
-    fontSize: Tipografia.cuerpo, // 14
+    fontSize: Tipografia.pequeno,
     color: Colores.textoSecundario,
-    marginTop: 2,
+    marginTop: Espaciado.xs,
   },
   atencion: {
-    fontSize: Tipografia.cuerpo, // Subido de 12 a 14 para cumplir accesibilidad
+    fontSize: Tipografia.pequeno,
     fontWeight: '600',
     color: Colores.primario,
     backgroundColor: Colores.fondo,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: Espaciado.md,
+    paddingVertical: Espaciado.xs,
     borderRadius: Radios.sm,
     overflow: 'hidden',
   },

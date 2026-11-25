@@ -1,5 +1,12 @@
-import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
+import { Pressable, Text, StyleSheet, ViewStyle, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import {
+  Colores,
+  Espaciado,
+  Radios,
+  Tamanos,
+  Tipografia,
+} from '@/constants/tema';
 
 type VarianteBoton = 'primario' | 'secundario' | 'alerta';
 
@@ -8,6 +15,7 @@ type Props = {
   onPress: () => void;
   variante?: VarianteBoton;
   deshabilitado?: boolean;
+  icono?: keyof typeof Ionicons.glyphMap;
   accessibilityLabel?: string;
   style?: ViewStyle;
 };
@@ -17,9 +25,13 @@ export default function Boton({
   onPress,
   variante = 'primario',
   deshabilitado = false,
+  icono,
   accessibilityLabel,
   style,
 }: Props) {
+  const colorTexto =
+    variante === 'secundario' ? Colores.primario : Colores.blanco;
+
   return (
     <Pressable
       onPress={onPress}
@@ -35,27 +47,39 @@ export default function Boton({
         style,
       ]}
     >
-      <Text
-        style={[
-          styles.textoBase,
-          variante === 'secundario' ? styles.textoSecundario : styles.textoClaro,
-        ]}
-      >
-        {titulo}
-      </Text>
+      <View style={styles.contenido}>
+        {icono && (
+          <Ionicons
+            name={icono}
+            size={Tamanos.iconoBoton}
+            color={colorTexto}
+          />
+        )}
+        <Text style={[styles.textoBase, { color: colorTexto }]}>{titulo}</Text>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48, // Área táctil ergonómica para terreno
+    minHeight: Tamanos.botonMinimo,
     paddingVertical: Espaciado.md,
-    paddingHorizontal: Espaciado.lg,
-    borderRadius: Radios.md,
+    paddingHorizontal: Espaciado.xxl,
+    borderRadius: Radios.lg,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
+    shadowColor: Colores.primarioOscuro,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  contenido: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Espaciado.sm,
   },
   primario: {
     backgroundColor: Colores.primario,
@@ -70,21 +94,17 @@ const styles = StyleSheet.create({
     borderColor: Colores.alerta,
   },
   presionado: {
-    opacity: 0.85,
-    transform: [{ scale: 0.99 }],
+    opacity: 0.88,
+    transform: [{ scale: 0.98 }],
   },
   deshabilitado: {
     backgroundColor: Colores.deshabilitado,
     borderColor: Colores.deshabilitado,
+    elevation: 0,
   },
   textoBase: {
-    fontSize: Tipografia.subtitulo, // 16 (>= 14)
+    fontSize: Tipografia.subtitulo,
     fontWeight: '700',
-  },
-  textoClaro: {
-    color: Colores.blanco,
-  },
-  textoSecundario: {
-    color: Colores.primario,
+    letterSpacing: 0.3,
   },
 });

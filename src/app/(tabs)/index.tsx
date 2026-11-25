@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { View, TextInput, FlatList, StyleSheet } from 'react-native';
 import TarjetaPaciente from '@/components/TarjetaPaciente';
 import { pacientesMock } from '@/data/pacientesMock';
-import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
+import {
+  Colores,
+  Espaciado,
+  Radios,
+  Tipografia,
+} from '@/constants/tema';
 
 export default function Pacientes() {
   const [busqueda, setBusqueda] = useState('');
@@ -47,11 +52,11 @@ const styles = StyleSheet.create({
     borderColor: Colores.borde,
     paddingHorizontal: Espaciado.lg,
     paddingVertical: Espaciado.md,
-    fontSize: Tipografia.subtitulo, // 16
+    fontSize: Tipografia.cuerpo,
     marginBottom: Espaciado.lg,
   },
   listaContenido: {
     gap: Espaciado.md,
-    paddingBottom: Espaciado.xl,
+    paddingBottom: Espaciado.xxl,
   },
 });
