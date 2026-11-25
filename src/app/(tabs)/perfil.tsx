@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Colores } from '@/constants/colores';
+import { Colores, Espaciado, Tipografia } from '@/constants/tema';
 
 export default function Perfil() {
   return (

@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { ColorValue } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Colores } from '@/constants/colores';
+import { Colores, Tipografia } from '@/constants/tema';
 
 type Icono = keyof typeof Ionicons.glyphMap;
 

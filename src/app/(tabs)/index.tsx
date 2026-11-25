@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, TextInput, FlatList, StyleSheet } from 'react-native';
 import TarjetaPaciente from '@/components/TarjetaPaciente';
 import { pacientesMock } from '@/data/pacientesMock';
-import { Colores } from '@/constants/colores';
+import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
 
 export default function Pacientes() {
   const [busqueda, setBusqueda] = useState('');
@@ -17,6 +17,7 @@ export default function Pacientes() {
         style={styles.buscador}
         placeholder="Buscar paciente por nombre..."
         placeholderTextColor={Colores.textoSecundario}
+        accessibilityLabel="Buscar paciente por nombre"
         value={busqueda}
         onChangeText={setBusqueda}
       />
@@ -35,22 +36,22 @@ export default function Pacientes() {
 const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
-    padding: 16,
+    padding: Espaciado.lg,
     backgroundColor: Colores.fondo,
   },
   buscador: {
     backgroundColor: Colores.tarjeta,
     color: Colores.texto,
-    borderRadius: 12,
+    borderRadius: Radios.md,
     borderWidth: 1,
     borderColor: Colores.borde,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    marginBottom: 16,
+    paddingHorizontal: Espaciado.lg,
+    paddingVertical: Espaciado.md,
+    fontSize: Tipografia.subtitulo, // 16
+    marginBottom: Espaciado.lg,
   },
   listaContenido: {
-    gap: 12,
-    paddingBottom: 24,
+    gap: Espaciado.md,
+    paddingBottom: Espaciado.xl,
   },
 });

@@ -1,7 +1,7 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { Paciente } from '@/data/pacientesMock';
-import { Colores } from '@/constants/colores';
+import { Colores, Espaciado, Radios, Tipografia } from '@/constants/tema';
 
 type Props = {
   paciente: Paciente;
@@ -10,10 +10,17 @@ type Props = {
 export default function TarjetaPaciente({ paciente }: Props) {
   return (
     <Link href={`/paciente/${paciente.id}`} asChild>
-      <Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Abrir ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad} años, atención número ${paciente.numero_atencion}`}
+      >
         {({ pressed }) => (
           <View style={[styles.tarjeta, pressed && styles.presionada]}>
-            <Image source={{ uri: paciente.foto }} style={styles.foto} />
+            <Image
+              source={{ uri: paciente.foto }}
+              style={styles.foto}
+              accessibilityIgnoresInvertColors
+            />
             <View style={styles.info}>
               <Text style={styles.nombre}>{paciente.nombre}</Text>
               <Text style={styles.detalles}>
@@ -33,9 +40,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    gap: 12,
+    gap: Espaciado.md,
     padding: 14,
-    borderRadius: 14,
+    borderRadius: Radios.lg,
     backgroundColor: Colores.tarjeta,
     borderWidth: 1,
     borderColor: Colores.borde,
@@ -59,23 +66,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nombre: {
-    fontSize: 18,
+    fontSize: Tipografia.titulo, // 18
     fontWeight: 'bold',
     color: Colores.primario,
   },
   detalles: {
-    fontSize: 14,
+    fontSize: Tipografia.cuerpo, // 14
     color: Colores.textoSecundario,
     marginTop: 2,
   },
   atencion: {
-    fontSize: 12,
+    fontSize: Tipografia.cuerpo, // Subido de 12 a 14 para cumplir accesibilidad
     fontWeight: '600',
     color: Colores.primario,
     backgroundColor: Colores.fondo,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: Radios.sm,
     overflow: 'hidden',
   },
 });
