@@ -1,6 +1,6 @@
-﻿import { Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 
 export default function TabsLayout() {
   return (
@@ -13,7 +13,7 @@ export default function TabsLayout() {
           backgroundColor: Colores.tarjeta,
           borderTopColor: Colores.borde,
         },
-        tabBarActiveTintColor: Colores.primario,
+        tabBarActiveTintColor: Colores.acento,
         tabBarInactiveTintColor: Colores.textoSecundario,
       }}>
       <Tabs.Screen

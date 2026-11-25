@@ -1,15 +1,16 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
 import TarjetaPaciente from '@/components/TarjetaPaciente';
 import { pacientesMock } from '@/data/pacientesMock';
-import { Colores } from '@/constants/colores';
+import { Colores, Espacio, Radio, Tipografia, TAMANO_TACTIL } from '@/constants/tema';
 
 export default function PacientesScreen() {
   const [busqueda, setBusqueda] = useState('');
 
-  const pacientesFiltrados = pacientesMock.filter((p) =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.especie.toLowerCase().includes(busqueda.toLowerCase())
+  const pacientesFiltrados = pacientesMock.filter(
+    (p) =>
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.especie.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   return (
@@ -21,30 +22,32 @@ export default function PacientesScreen() {
         placeholder="Buscar paciente..."
         placeholderTextColor={Colores.textoSecundario}
         autoCapitalize="none"
+        accessibilityLabel="Buscar paciente por nombre o especie"
         style={styles.buscador}
       />
       <FlatList
         data={pacientesFiltrados}
         keyExtractor={(p) => p.id.toString()}
         renderItem={({ item }) => <TarjetaPaciente paciente={item} />}
-        contentContainerStyle={{ gap: 12 }}
+        contentContainerStyle={styles.lista}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: { flex: 1, padding: 16, backgroundColor: Colores.fondo },
-  subtitulo: { fontSize: 16, color: Colores.textoSecundario, marginBottom: 12 },
+  contenedor: { flex: 1, padding: Espacio.m, backgroundColor: Colores.fondo },
+  subtitulo: { ...Tipografia.cuerpo, color: Colores.textoSecundario, marginBottom: Espacio.m },
   buscador: {
+    ...Tipografia.cuerpo,
+    minHeight: TAMANO_TACTIL,
     backgroundColor: Colores.tarjeta,
     borderWidth: 1,
     borderColor: Colores.borde,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 16,
-    fontSize: 16,
+    borderRadius: Radio.m,
+    paddingHorizontal: Espacio.m,
+    marginBottom: Espacio.m,
     color: Colores.texto,
   },
+  lista: { gap: Espacio.m, paddingBottom: Espacio.m },
 });
