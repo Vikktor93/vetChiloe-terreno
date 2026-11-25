@@ -1,14 +1,16 @@
-import { Colores } from "@/constants/tema";
+import { Colores, Espacio, Tipografia } from "@/constants/tema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Perfil() {
   return (
     <View style={styles.contenedor}>
-      <View style={styles.avatar}>
-        <Ionicons name="person" size={48} color="#fff" />
+      <View style={styles.avatar} accessibilityLabel="Foto de perfil">
+        <Ionicons name="person" size={48} color={Colores.textoClaro} />
       </View>
-      <Text style={styles.nombre}>Valentina Calderón</Text>
+      <Text style={styles.nombre} accessibilityRole="header">
+        Valentina Calderón
+      </Text>
       <Text style={styles.texto}>Médica veterinaria · Terreno</Text>
     </View>
   );
@@ -18,8 +20,8 @@ const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 48,
-    gap: 8,
+    paddingTop: Espacio.xl,
+    gap: Espacio.s,
     backgroundColor: Colores.fondo,
   },
   avatar: {
@@ -30,6 +32,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  nombre: {fontSize: 22, fontWeight: "bold", color: Colores.texto},
-  texto: {color: Colores.textoSecundario},
+  nombre: {...Tipografia.titulo, color: Colores.texto},
+  texto: {...Tipografia.cuerpo, color: Colores.textoSecundario},
 });
