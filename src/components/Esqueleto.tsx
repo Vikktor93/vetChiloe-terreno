@@ -28,11 +28,11 @@ export function Bloque({ ancho = '100%', alto, radio = Radio.s, style }: BloqueP
 
   useEffect(() => {
     if (reducir) return;
-    pulso.value = withRepeat(
+    pulso.set(withRepeat(
       withTiming(1, { duration: Movimiento.pulso, easing: Curvas.respiracion }),
       -1,
       true
-    );
+    ));
     return () => cancelAnimation(pulso);
   }, [reducir, pulso]);
 

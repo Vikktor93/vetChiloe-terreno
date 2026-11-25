@@ -5,9 +5,10 @@ import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Curvas, Movimiento } from '@/constants/tema';
+import { Curvas, Movimiento, Resortes } from '@/constants/tema';
 import { vibrar, type TipoVibracion } from '@/utils/vibrar';
 
 const PressableAnimado = Animated.createAnimatedComponent(Pressable);
@@ -26,7 +27,8 @@ type Props = Omit<PressableProps, 'style'> & {
 
 /**
  * Base de todo lo tocable en la app:
- * - Presión: se encoge a 0,97 en 120 ms con curva ease-out fuerte (respuesta inmediata).
+ * - Presión: se encoge a 0,97 en 120 ms con curva ease-out fuerte (respuesta inmediata)
+ *   y al soltar vuelve con un resorte (rebote mínimo).
  * - Hover: con puntero (tablet con mouse o web) crece apenas y cambia de color.
  *   En el teléfono no existe hover, así que nunca queda "pegado".
  * - Vibración al tocar.
@@ -49,14 +51,15 @@ export default function Presionable({
   const hover = useSharedValue(0);
 
   const animar = (valor: typeof presion, destino: number, duracion: number) => {
-    valor.value = withTiming(destino, { duration: duracion, easing: Curvas.salida });
+    valor.set(withTiming(destino, { duration: duracion, easing: Curvas.salida }));
   };
 
   const estiloAnimado = useAnimatedStyle(() => {
-    const activo = Math.max(presion.value, hover.value);
+    // El resorte al soltar puede pasar de 0 (rebote): el color no debe hacerlo.
+    const activo = Math.min(1, Math.max(presion.value, hover.value, 0));
     const escala = reducir
       ? 1
-      : interpolate(presion.value, [0, 1], [1, Movimiento.escalaPresion]) *
+      : interpolate(presion.value, [-1, 0, 1], [2 - Movimiento.escalaPresion, 1, Movimiento.escalaPresion]) *
         interpolate(hover.value, [0, 1], [1, Movimiento.escalaHover]);
 
     return {
@@ -81,7 +84,10 @@ export default function Presionable({
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        animar(presion, 0, Movimiento.soltar);
+        // Vuelve con un resorte: pequeño rebote, como un botón físico.
+        presion.set(reducir
+          ? withTiming(0, { duration: Movimiento.soltar, easing: Curvas.salida })
+          : withSpring(0, Resortes.soltar));
         onPressOut?.(e);
       }}
       onHoverIn={(e) => {

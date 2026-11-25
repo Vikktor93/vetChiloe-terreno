@@ -32,10 +32,10 @@ export default function Aparecer({ children, orden = 0, desde = 12, style }: Pro
   const progreso = useSharedValue(0);
 
   useEffect(() => {
-    progreso.value = withDelay(
+    progreso.set(withDelay(
       Math.min(orden, MAX_ORDEN) * Movimiento.escalonado,
       withTiming(1, { duration: Movimiento.entrada, easing: Curvas.salida })
-    );
+    ));
   }, [orden, progreso]);
 
   const estilo = useAnimatedStyle(() => ({

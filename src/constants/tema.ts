@@ -20,6 +20,9 @@ export const Colores = {
   tarjetaActiva: '#1F1A26',   // Tarjeta bajo el dedo o el puntero
   acentoSuave: 'rgba(255, 92, 168, 0.14)', // Relleno del botón secundario activo
   esqueleto: '#24202B',       // Bloques del esqueleto de carga
+  // Degradado sobre la foto de la ficha (para que el texto blanco se lea)
+  sombraFoto: ['rgba(11, 11, 14, 0)', 'rgba(11, 11, 14, 0.55)', '#0B0B0E'] as const,
+  vidrio: 'rgba(22, 22, 29, 0.72)', // botones flotantes sobre la foto
 };
 
 // Escala fija de espaciado: nada de márgenes al azar.
@@ -57,4 +60,21 @@ export const Curvas = {
   salida: Easing.bezier(0.23, 1, 0.32, 1),       // entradas, presión, hover
   enMovimiento: Easing.bezier(0.77, 0, 0.175, 1), // cosas que se mueven en pantalla
   respiracion: Easing.inOut(Easing.quad),         // pulso continuo del esqueleto
+};
+
+// Resortes: para movimientos que el usuario puede interrumpir (conservan la
+// velocidad si cambias de idea a mitad de camino). Rebote mínimo: la app es
+// de trabajo, no un juego.
+export const Resortes = {
+  // Píldora del filtro que se desliza entre opciones
+  deslizar: { damping: 20, stiffness: 220, mass: 0.7 },
+  // Al soltar un botón vuelve con un pequeño rebote
+  soltar: { damping: 14, stiffness: 320, mass: 0.6 },
+};
+
+// Medidas de los encabezados que se transforman con el scroll.
+export const Encabezado = {
+  alturaFoto: 300,  // foto de la ficha
+  tituloGrande: 32, // "Pacientes" antes de hacer scroll
+  colapso: 64,      // px de scroll en que el título grande pasa a barra compacta
 };

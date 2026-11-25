@@ -1,19 +1,72 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, Alert, StyleSheet } from 'react-native';
+import { View, Text, Alert, StyleSheet } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+} from 'react-native-reanimated';
 import Aparecer from '@/components/Aparecer';
 import Boton from '@/components/Boton';
+import Presionable from '@/components/Presionable';
 import { FichaEsqueleto } from '@/components/Esqueleto';
 import { vibrar } from '@/utils/vibrar';
 import { Paciente } from '@/data/pacientesMock';
 import { obtenerPaciente } from '@/services/api';
-import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
+import { formatearEdad } from '@/utils/formato';
+import {
+  Colores,
+  Encabezado,
+  Espacio,
+  Radio,
+  Tipografia,
+  TAMANO_TACTIL,
+} from '@/constants/tema';
 
 type Resultado = { id: string; paciente?: Paciente; error?: string };
 
+const ALTO_FOTO = Encabezado.alturaFoto;
+
+/** Botón circular "volver", flotando sobre la foto. */
+function BotonVolver({ top }: { top: number }) {
+  return (
+    <Presionable
+      onPress={() => router.back()}
+      hitSlop={8}
+      fondo={{ normal: Colores.vidrio, activo: Colores.tarjetaActiva }}
+      borde={{ normal: 'rgba(255, 255, 255, 0.12)', activo: Colores.acento }}
+      accessibilityRole="button"
+      accessibilityLabel="Volver a la lista de pacientes"
+      style={[styles.volver, { top: top + Espacio.s }]}>
+      <Ionicons name="arrow-back" size={22} color={Colores.texto} />
+    </Presionable>
+  );
+}
+
+/** Dato corto con ícono (especie, edad, atención). */
+function Chip({ icono, etiqueta, valor }: { icono: keyof typeof Ionicons.glyphMap; etiqueta: string; valor: string }) {
+  return (
+    <View style={styles.chip} accessible accessibilityLabel={`${etiqueta}: ${valor}`}>
+      <View style={styles.chipIcono}>
+        <Ionicons name={icono} size={18} color={Colores.acento} />
+      </View>
+      <Text style={styles.chipEtiqueta}>{etiqueta}</Text>
+      <Text style={styles.chipValor} numberOfLines={2}>
+        {valor}
+      </Text>
+    </View>
+  );
+}
+
 export default function FichaPacienteScreen() {
   const insets = useSafeAreaInsets(); // antes de cualquier return
+  const reducir = useReducedMotion();
   const { id } = useLocalSearchParams<{ id: string }>();
   // Guardamos el resultado junto al id al que corresponde.
   const [resultado, setResultado] = useState<Resultado | null>(null);
@@ -34,6 +87,47 @@ export default function FichaPacienteScreen() {
     };
   }, [id, intento]);
 
+  // ---- Animaciones ligadas al scroll (corren en el hilo de UI) ----
+  const scrollY = useSharedValue(0);
+  const alHacerScroll = useAnimatedScrollHandler((e) => {
+    scrollY.set(e.contentOffset.y);
+  });
+
+  // Foto: parallax al subir (va a la mitad de velocidad) y se agranda al tirar hacia abajo.
+  const estiloFoto = useAnimatedStyle(() => {
+    if (reducir) return {};
+    const y = scrollY.value;
+    return {
+      transform: [
+        { translateY: y < 0 ? y / 2 : y * 0.5 },
+        { scale: interpolate(y, [-ALTO_FOTO, 0], [2, 1], Extrapolation.CLAMP) },
+      ],
+    };
+  });
+
+  // Nombre sobre la foto: se desvanece y sube mientras la foto se va.
+  const estiloTituloFoto = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, ALTO_FOTO * 0.45], [1, 0], Extrapolation.CLAMP),
+    transform: [
+      { translateY: reducir ? 0 : interpolate(scrollY.value, [0, ALTO_FOTO], [0, -40], Extrapolation.CLAMP) },
+    ],
+  }));
+
+  // Barra superior: aparece cuando la foto ya casi no se ve.
+  const estiloBarra = useAnimatedStyle(() => {
+    const p = interpolate(
+      scrollY.value,
+      [ALTO_FOTO - 140, ALTO_FOTO - 80],
+      [0, 1],
+      Extrapolation.CLAMP
+    );
+    return { opacity: p };
+  });
+  const estiloTituloBarra = useAnimatedStyle(() => {
+    const p = interpolate(scrollY.value, [ALTO_FOTO - 100, ALTO_FOTO - 60], [0, 1], Extrapolation.CLAMP);
+    return { opacity: p, transform: [{ translateY: reducir ? 0 : (1 - p) * 8 }] };
+  });
+
   // Si el resultado es de otro id, todavía estamos cargando.
   const actual = resultado?.id === id ? resultado : null;
   const paciente = actual?.paciente;
@@ -46,22 +140,27 @@ export default function FichaPacienteScreen() {
 
   if (error) {
     return (
-      <Aparecer desde={0} style={styles.centrado}>
-        <Stack.Screen options={{ title: 'Ficha del Paciente' }} />
-        <Text style={styles.error} accessibilityRole="alert">
-          No se pudo cargar la ficha.
-        </Text>
-        <Text style={styles.detalleError}>{error}</Text>
-        <Boton titulo="Reintentar" onPress={reintentar} />
-        <Boton titulo="Volver" variante="secundario" onPress={() => router.back()} />
-      </Aparecer>
+      <View style={styles.pantalla}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <BotonVolver top={insets.top} />
+        <Aparecer desde={0} style={styles.centrado}>
+          <Ionicons name="cloud-offline-outline" size={48} color={Colores.alerta} />
+          <Text style={styles.error} accessibilityRole="alert">
+            No se pudo cargar la ficha.
+          </Text>
+          <Text style={styles.detalleError}>{error}</Text>
+          <Boton titulo="Reintentar" onPress={reintentar} />
+        </Aparecer>
+      </View>
     );
   }
 
   if (!paciente) {
     return (
-      <View style={styles.pantalla}>
+      <View style={[styles.pantalla, { paddingTop: insets.top }]}>
+        <Stack.Screen options={{ headerShown: false }} />
         <FichaEsqueleto />
+        <BotonVolver top={insets.top} />
       </View>
     );
   }
@@ -73,35 +172,69 @@ export default function FichaPacienteScreen() {
 
   return (
     <View style={styles.pantalla}>
-      <Stack.Screen options={{ title: paciente.nombre }} />
-      <ScrollView contentContainerStyle={styles.contenido}>
-        {/* Entrada escalonada: foto -> datos -> botón (sube desde la zona del pulgar) */}
-        <Aparecer orden={0}>
-          <Image
+      <Stack.Screen options={{ headerShown: false, title: paciente.nombre }} />
+
+      <Animated.ScrollView
+        onScroll={alHacerScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingBottom: Espacio.xl }}
+        showsVerticalScrollIndicator={false}>
+        {/* Foto con parallax + degradado para leer el nombre encima */}
+        <View style={styles.marcoFoto}>
+          <Animated.Image
             source={{ uri: paciente.foto }}
-            style={styles.foto}
+            style={[styles.foto, estiloFoto]}
             resizeMode="cover"
             accessibilityLabel={`Foto de ${paciente.nombre}`}
           />
-        </Aparecer>
-        <Aparecer orden={1} style={styles.card}>
-          <Text style={styles.nombre} accessibilityRole="header">
-            {paciente.nombre}
-          </Text>
-          <Text style={styles.atencion}>Atención N° {paciente.numero_atencion}</Text>
-          <View style={styles.separador} />
-          <Text style={styles.etiqueta}>Especie</Text>
-          <Text style={styles.valor}>{paciente.especie}</Text>
-          <Text style={styles.etiqueta}>Edad</Text>
-          <Text style={styles.valor}>{paciente.edad} años</Text>
-          <Text style={styles.etiqueta}>Diagnóstico / Motivo</Text>
-          <Text style={styles.valor}>{paciente.diagnostico}</Text>
-        </Aparecer>
-      </ScrollView>
+          <LinearGradient
+            colors={Colores.sombraFoto}
+            locations={[0.35, 0.7, 1]}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+          />
+          <Animated.View style={[styles.tituloFoto, estiloTituloFoto]}>
+            <Aparecer orden={0} desde={16}>
+              <Text style={styles.nombre} accessibilityRole="header">
+                {paciente.nombre}
+              </Text>
+              <Text style={styles.atencion}>Atención N° {paciente.numero_atencion}</Text>
+            </Aparecer>
+          </Animated.View>
+        </View>
+
+        <View style={styles.cuerpo}>
+          {/* Datos rápidos en chips */}
+          <Aparecer orden={1} style={styles.chips}>
+            <Chip icono="paw" etiqueta="Especie" valor={paciente.especie} />
+            <Chip icono="calendar-outline" etiqueta="Edad" valor={formatearEdad(paciente.edad)} />
+          </Aparecer>
+
+          {/* Diagnóstico */}
+          <Aparecer orden={2} style={styles.tarjeta}>
+            <View style={styles.tarjetaCabecera}>
+              <Ionicons name="medkit-outline" size={20} color={Colores.acento} />
+              <Text style={styles.tarjetaTitulo}>Diagnóstico / Motivo</Text>
+            </View>
+            <Text style={styles.diagnostico}>{paciente.diagnostico}</Text>
+          </Aparecer>
+        </View>
+      </Animated.ScrollView>
+
+      {/* Barra superior que aparece al hacer scroll */}
+      <Animated.View
+        pointerEvents="none"
+        style={[styles.barra, { paddingTop: insets.top, height: insets.top + 64 }, estiloBarra]}>
+        <Animated.Text style={[styles.barraTitulo, estiloTituloBarra]} numberOfLines={1}>
+          {paciente.nombre}
+        </Animated.Text>
+      </Animated.View>
+
+      <BotonVolver top={insets.top} />
 
       {/* Acción principal fija abajo: zona del pulgar */}
       <Aparecer
-        orden={2}
+        orden={3}
         desde={24}
         style={[styles.acciones, { paddingBottom: insets.bottom + Espacio.m }]}>
         <Boton
@@ -116,35 +249,81 @@ export default function FichaPacienteScreen() {
 
 const styles = StyleSheet.create({
   pantalla: { flex: 1, backgroundColor: Colores.fondo },
-  contenido: { padding: Espacio.m, gap: Espacio.m },
   centrado: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Espacio.l,
     gap: Espacio.m,
-    backgroundColor: Colores.fondo,
   },
   error: { ...Tipografia.subtitulo, color: Colores.alerta, textAlign: 'center' },
   detalleError: { ...Tipografia.etiqueta, color: Colores.textoSecundario, textAlign: 'center' },
-  foto: { width: '100%', height: 220, borderRadius: Radio.l, backgroundColor: Colores.esqueleto },
-  card: {
-    backgroundColor: Colores.tarjeta,
-    borderRadius: Radio.l,
-    padding: Espacio.m,
+
+  marcoFoto: { height: ALTO_FOTO, overflow: 'visible' },
+  foto: { width: '100%', height: ALTO_FOTO, backgroundColor: Colores.esqueleto },
+  tituloFoto: { position: 'absolute', left: Espacio.m, right: Espacio.m, bottom: Espacio.m },
+  nombre: { fontSize: Encabezado.tituloGrande, fontWeight: '800', color: Colores.texto, letterSpacing: -0.5 },
+  atencion: { ...Tipografia.etiqueta, color: Colores.textoSecundario, marginTop: Espacio.xs },
+
+  volver: {
+    position: 'absolute',
+    left: Espacio.m,
+    zIndex: 20,
+    width: TAMANO_TACTIL,
+    height: TAMANO_TACTIL,
+    borderRadius: Radio.completo,
     borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  barra: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: TAMANO_TACTIL + Espacio.l,
+    backgroundColor: Colores.tarjeta,
+    borderBottomWidth: 1,
     borderColor: Colores.borde,
   },
-  nombre: { ...Tipografia.titulo, color: Colores.acento },
-  atencion: { ...Tipografia.etiqueta, color: Colores.textoSecundario, marginTop: Espacio.xs },
-  separador: { height: 1, backgroundColor: Colores.borde, marginVertical: Espacio.m },
-  etiqueta: {
-    ...Tipografia.etiqueta,
-    color: Colores.textoSecundario,
-    marginTop: Espacio.s,
-    textTransform: 'uppercase',
+  barraTitulo: { ...Tipografia.subtitulo, color: Colores.texto },
+
+  cuerpo: { padding: Espacio.m, gap: Espacio.m, backgroundColor: Colores.fondo },
+  chips: { flexDirection: 'row', gap: Espacio.s },
+  chip: {
+    flex: 1,
+    padding: Espacio.m,
+    gap: Espacio.xs,
+    borderRadius: Radio.l,
+    borderWidth: 1,
+    borderColor: Colores.borde,
+    backgroundColor: Colores.tarjeta,
   },
-  valor: { ...Tipografia.cuerpo, fontWeight: '500', color: Colores.texto, marginTop: Espacio.xs },
+  chipIcono: {
+    width: 32,
+    height: 32,
+    borderRadius: Radio.completo,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colores.acentoSuave,
+    marginBottom: Espacio.xs,
+  },
+  chipEtiqueta: { ...Tipografia.etiqueta, color: Colores.textoSecundario },
+  chipValor: { ...Tipografia.cuerpo, fontWeight: '700', color: Colores.texto },
+  tarjeta: {
+    padding: Espacio.m,
+    gap: Espacio.s,
+    borderRadius: Radio.l,
+    borderWidth: 1,
+    borderColor: Colores.borde,
+    backgroundColor: Colores.tarjeta,
+  },
+  tarjetaCabecera: { flexDirection: 'row', alignItems: 'center', gap: Espacio.s },
+  tarjetaTitulo: { ...Tipografia.etiqueta, fontWeight: '700', color: Colores.textoSecundario, textTransform: 'uppercase', letterSpacing: 0.5 },
+  diagnostico: { ...Tipografia.cuerpo, color: Colores.texto, lineHeight: 24 },
   acciones: {
     padding: Espacio.m,
     backgroundColor: Colores.tarjeta,

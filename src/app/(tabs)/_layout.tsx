@@ -24,6 +24,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Pacientes',
+          headerShown: false, // la pantalla tiene su propio encabezado animado
           tabBarIcon: ({ color, size }) => <Ionicons name="paw" size={size} color={color as string} />,
         }}
       />
