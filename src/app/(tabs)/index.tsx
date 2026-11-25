@@ -1,5 +1,5 @@
 import TarjetaPaciente from '@/components/TarjetaPaciente';
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 import { pacientesMock } from '@/data/pacientesMock';
 import { useState } from 'react';
 import {

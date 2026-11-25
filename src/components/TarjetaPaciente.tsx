@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 import { Paciente } from '@/data/pacientesMock';
 import { Link } from 'expo-router';
 

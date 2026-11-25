@@ -1,9 +1,11 @@
-import { Colores } from '@/constants/colores';
+import Boton from '@/components/Boton';
+import { Colores, Espacio, Radio, TamañoTexto } from '@/constants/tema';
 import { pacientesMock } from '@/data/pacientesMock';
 
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -11,7 +13,11 @@ import {
   View,
 } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 export default function FichaPaciente() {
+  const insets = useSafeAreaInsets();
+
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const paciente = pacientesMock.find(
@@ -20,9 +26,11 @@ export default function FichaPaciente() {
 
   if (!paciente) {
     return (
-      <Text style={styles.vacio}>
-        Paciente no encontrado
-      </Text>
+      <View style={styles.contenedor}>
+        <Text style={styles.vacio}>
+          Paciente no encontrado
+        </Text>
+      </View>
     );
   }
 
@@ -34,49 +42,83 @@ export default function FichaPaciente() {
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.contenedor}>
+    <View style={styles.pantalla}>
       <Stack.Screen options={{ title: paciente.nombre }} />
 
-      <Image
-        source={{ uri: paciente.foto }}
-        style={styles.foto}
-      />
+      <ScrollView
+        contentContainerStyle={styles.contenedor}
+        showsVerticalScrollIndicator={false}
+      >
+        <Image
+          source={{ uri: paciente.foto }}
+          style={styles.foto}
+          accessibilityLabel={`Fotografía de ${paciente.nombre}`}
+        />
 
-      <Text style={styles.nombre}>
-        {paciente.nombre}
-      </Text>
+        <Text style={styles.nombre}>
+          {paciente.nombre}
+        </Text>
 
-      {datos.map((dato) => (
-        <View key={dato.etiqueta} style={styles.fila}>
-          <Text style={styles.etiqueta}>
-            {dato.etiqueta}
-          </Text>
+        {datos.map((dato) => (
+          <View
+            key={dato.etiqueta}
+            style={styles.fila}
+            accessible
+            accessibilityLabel={`${dato.etiqueta}: ${dato.valor}`}
+          >
+            <Text style={styles.etiqueta}>
+              {dato.etiqueta}
+            </Text>
 
-          <Text style={styles.valor}>
-            {dato.valor}
-          </Text>
-        </View>
-      ))}
-    </ScrollView>
+            <Text style={styles.valor}>
+              {dato.valor}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+
+      <View
+        style={[
+          styles.acciones,
+          { paddingBottom: insets.bottom + Espacio.m },
+        ]}
+      >
+        <Boton
+          titulo="Registrar visita"
+          onPress={() =>
+            Alert.alert(
+              'Próximamente',
+              'Disponible en el Tópico 05'
+            )
+          }
+        />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  pantalla: {
+    flex: 1,
+    backgroundColor: Colores.fondo,
+  },
+
   contenedor: {
     flexGrow: 1,
-    padding: 20,
-    gap: 12,
+    padding: Espacio.m,
+    gap: Espacio.m,
     backgroundColor: Colores.fondo,
+    paddingBottom: Espacio.l,
   },
 
   foto: {
     width: '100%',
     height: 260,
-    borderRadius: 16,
+    borderRadius: Radio.medio,
   },
 
   nombre: {
-    fontSize: 26,
+    fontSize: TamañoTexto.tituloGrande,
     fontWeight: 'bold',
     color: Colores.primario,
   },
@@ -84,22 +126,38 @@ const styles = StyleSheet.create({
   fila: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: Colores.tarjeta,
-    padding: 14,
-    borderRadius: 12,
+    padding: Espacio.m,
+    borderRadius: Radio.medio,
+    gap: Espacio.s,
   },
 
   etiqueta: {
+    fontSize: TamañoTexto.pequeño,
     color: Colores.textoSecundario,
+    flexShrink: 1,
   },
 
   valor: {
+    fontSize: TamañoTexto.cuerpo,
     fontWeight: '600',
     color: Colores.texto,
+    flexShrink: 1,
+    textAlign: 'right',
+  },
+
+  acciones: {
+    padding: Espacio.m,
+    backgroundColor: Colores.tarjeta,
+    borderTopWidth: 1,
+    borderColor: Colores.borde,
   },
 
   vacio: {
-    padding: 20,
+    padding: Espacio.l,
+    fontSize: TamañoTexto.cuerpo,
     textAlign: 'center',
+    color: Colores.texto,
   },
 });

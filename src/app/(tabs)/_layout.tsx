@@ -1,4 +1,4 @@
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
