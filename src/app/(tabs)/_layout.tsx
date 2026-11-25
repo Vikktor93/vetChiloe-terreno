@@ -2,6 +2,7 @@ import { ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colores } from '@/constants/tema';
+import { vibrar } from '@/utils/haptics';
 
 type Icono = keyof typeof Ionicons.glyphMap;
 const icono = (nombre: Icono) =>
@@ -12,7 +13,7 @@ const icono = (nombre: Icono) =>
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{
+    <Tabs screenListeners={{ tabPress: vibrar.seleccion }} screenOptions={{
       headerStyle: { backgroundColor: Colores.primario },
       headerTintColor: Colores.textoSobrePrimario,
       tabBarActiveTintColor: Colores.primario,

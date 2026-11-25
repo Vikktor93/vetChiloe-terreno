@@ -26,6 +26,19 @@ npx tsc --noEmit
 npx expo lint
 ```
 
+## Vibración y animaciones
+
+Pensado para trabajar al sol, cuando la pantalla casi no se ve: cada acción importante confirma con una vibración (`expo-haptics`, helper en `src/utils/haptics.ts`).
+
+- Botones: vibración media (primario) o suave (secundario); no vibran deshabilitados ni cargando.
+- Tocar una tarjeta de paciente: vibración suave.
+- "Registrar visita": vibración de éxito junto al aviso.
+- Al aparecer un error de conexión (lista o ficha): vibración de error; "Reintentar" vibra como botón.
+- Cambiar de pestaña: vibración de selección.
+- El buscador no vibra al escribir.
+
+Animaciones sutiles con Reanimated (duraciones en `Animacion` de `src/constants/tema.ts`): botones y tarjetas se achican levemente al presionarlos, las primeras tarjetas aparecen escalonadas y la ficha aparece con un fundido. Si el teléfono tiene activado "reducir movimiento", no se animan. En web y emuladores la vibración no hace nada; hay que probarla en un teléfono real.
+
 ## Variable de entorno
 
 Crear o editar `.env` en la raíz del proyecto con la URL (HTTPS) de la API de vetChiloé:

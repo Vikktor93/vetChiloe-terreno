@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Image, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Boton from '@/components/Boton';
 import { obtenerPaciente } from '@/services/api';
-import { Paciente } from '@/data/pacientesMock';
-import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
+import { Paciente, textoEdad } from '@/data/pacientesMock';
+import FotoPaciente from '@/components/FotoPaciente';
+import { vibrar } from '@/utils/haptics';
+import { Animacion, Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 
 const ALTO_FOTO = 260;
+const ENTRADA = FadeIn.duration(Animacion.normal);
 
 export default function FichaPaciente() {
   const insets = useSafeAreaInsets(); // antes de cualquier return
@@ -23,6 +27,10 @@ export default function FichaPaciente() {
     return () => { activo = false; };
   }, [id]);
 
+  useEffect(() => {
+    if (error) vibrar.error();
+  }, [error]);
+
   if (error) return <Text style={styles.vacio}>{error}</Text>;
   if (!paciente) {
     return <ActivityIndicator style={styles.centro} size="large" color={Colores.primario} />;
@@ -30,13 +38,13 @@ export default function FichaPaciente() {
 
   return (
     <View style={styles.pantalla}>
-      <ScrollView contentContainerStyle={styles.contenedor}>
+      <Animated.ScrollView entering={ENTRADA} contentContainerStyle={styles.contenedor}>
         <Stack.Screen options={{ title: paciente.nombre }} />
-        <Image source={{ uri: paciente.foto }} style={styles.foto} />
+        <FotoPaciente uri={paciente.foto} style={styles.foto} tamanoIcono={96} />
         <Text style={styles.nombre}>{paciente.nombre}</Text>
         {[
           ['Especie', paciente.especie],
-          ['Edad', `${paciente.edad} años`],
+          ['Edad', textoEdad(paciente.edad)],
           ['N° de atención', paciente.numero_atencion],
           ['Diagnóstico', paciente.diagnostico],
         ].map(([etiqueta, valor]) => (
@@ -45,10 +53,11 @@ export default function FichaPaciente() {
             <Text style={styles.valor}>{valor}</Text>
           </View>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
       <View style={[styles.acciones, { paddingBottom: insets.bottom + Espacio.m }]}>
         <Boton
           titulo="Registrar visita"
+          vibracion={vibrar.exito}
           onPress={() => Alert.alert('Próximamente', 'Disponible en el Tópico 05')}
         />
       </View>
