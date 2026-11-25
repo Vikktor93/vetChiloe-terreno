@@ -1,56 +1,37 @@
-# Welcome to your Expo app 👋
+# vetChiloé Terreno
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App móvil (Expo SDK 58 + Expo Router) para que el equipo de vetChiloé atienda pacientes en terreno: lista de pacientes con buscador, ficha de cada paciente y datos reales desde la API de vetChiloé web.
 
-## Get started
+## Historias de usuario
 
-1. Install dependencies
+- Como veterinario en terreno, quiero ver la lista de mis pacientes en el teléfono, para saber a quién debo atender sin volver a la clínica.
+- Como veterinario en terreno, quiero buscar un paciente por su nombre, para encontrarlo rápido mientras estoy en un predio.
+- Como veterinario en terreno, quiero abrir la ficha de un paciente con su foto, especie, edad y diagnóstico, para revisar sus antecedentes antes de examinarlo.
+- Como veterinario en terreno, quiero tener el botón "Registrar visita" al alcance del pulgar, para usar la app con una sola mano mientras sostengo al animal.
+- Como veterinario en terreno, quiero ver un aviso claro y un botón para reintentar cuando falla la conexión, para no quedarme sin datos cuando la señal es intermitente.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Cómo ejecutar
 
 ```bash
-npm run reset-project
+npm install
+npx expo start -c
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Escanear el código QR con Expo Go.
 
-### Other setup steps
+Revisiones:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx tsc --noEmit
+npx expo lint
+```
 
-## Learn more
+## Variable de entorno
 
-To learn more about developing your project with Expo, look at the following resources:
+Crear o editar `.env` en la raíz del proyecto con la URL (HTTPS) de la API de vetChiloé:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+EXPO_PUBLIC_API_URL=https://tu-api.onrender.com
+```
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+La app consume `GET /api/pacientes` (lista) y `GET /api/pacientes/:id` (ficha). Las variables `EXPO_PUBLIC_` quedan dentro de la app: nunca pongas claves secretas. Después de cambiar `.env`, reiniciar con `npx expo start -c`.
