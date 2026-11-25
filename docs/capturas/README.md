@@ -35,10 +35,7 @@ La app consume la misma API de vetChiloé web: `https://vetchiloe.onrender.com`.
 
 ### Estado de error con Reintentar
 
-_Captura pendiente._
-<!-- Cuando la tengas: guárdala en esta carpeta como avance04-error-servidor.jpg
-     y reemplaza "_Captura pendiente._" por:
-     <img src="avance04-error-servidor.jpg" alt="Error de servidor con botón Reintentar" width="300" /> -->
+<img src="avance04-error-servidor.png" alt="Error de servidor con botón Reintentar" width="300" />
 
 
 ### Checklist de la conexión con la API
