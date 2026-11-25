@@ -86,6 +86,7 @@ export default function Pacientes() {
         }
         accessibilityRole="button"
         accessibilityLabel="Agregar paciente"
+        hitSlop={Espacio.s}
       >
         <Ionicons name="add" size={32} color={Colores.textoClaro} />
       </Pressable>
@@ -131,9 +132,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: Espacio.l,
     bottom: Espacio.l,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: Colores.primarioOscuro,
     alignItems: "center",
     justifyContent: "center",

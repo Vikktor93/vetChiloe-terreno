@@ -13,7 +13,8 @@ export const Colores = {
 };
 export const Espacio = {xs: 4, s: 8, m: 16, l: 24, xl: 32};
 export const Radio = {s: 8, m: 12, l: 16};
-export const TAMANO_TACTIL = 48;
+// 48 es el minimo, se sube a 56 para que funcione con guantes en terreno
+export const TAMANO_TACTIL = 56;
 
 export const Tipografia = {
   titulo: {fontSize: 24, fontWeight: "700"},

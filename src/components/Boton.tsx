@@ -1,9 +1,9 @@
 import {
-    Colores,
-    Espacio,
-    Radio,
-    TAMANO_TACTIL,
-    Tipografia,
+  Colores,
+  Espacio,
+  Radio,
+  TAMANO_TACTIL,
+  Tipografia,
 } from "@/constants/tema";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
@@ -27,6 +27,7 @@ export default function Boton({
   return (
     <Pressable
       onPress={onPress}
+      hitSlop={Espacio.s}
       disabled={deshabilitado || cargando}
       accessibilityRole="button"
       accessibilityLabel={titulo}
