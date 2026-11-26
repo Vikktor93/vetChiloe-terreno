@@ -6,8 +6,8 @@ export default function Visitas() {
   return (
     <View style={styles.contenedor}>
       <Ionicons name="map-outline" size={64} color={Colores.primario} />
-      <Text style={styles.titulo}>Visitas a predios</Text>
-      <Text style={styles.texto}>Disponible en el Tópico 05</Text>
+      <Text style={styles.titulo}>Visita en Terreno</Text>
+      <Text style={styles.texto}>Próximamente</Text>
     </View>
   );
 }

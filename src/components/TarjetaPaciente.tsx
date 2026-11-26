@@ -15,7 +15,7 @@ export default function TarjetaPaciente({ paciente }: Props) {
       <Image source={{ uri: paciente.foto }} style={styles.foto} />
       <View style={styles.info}>
         <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text style={styles.detalle}>{paciente.especie} · {paciente.edad} años</Text>
+        <Text style={styles.detalle}>{paciente.especie} - {paciente.edad} años</Text>
         <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
       </View>
     </Pressable>
