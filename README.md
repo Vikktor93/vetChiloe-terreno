@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/img/logo-readme.png" width="200" alt="Logo de vetChiloé: una cruz veterinaria con una huella">
+</p>
+
 # App Móvil: vetChiloé en Terreno
 
 **La clínica, ahora en terreno**
@@ -67,8 +71,8 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 
 | Pantalla | Ruta | Qué muestra |
 |---|---|---|
-| Splash | - | Huellas sobre fondo violeta mientras la app abre |
-| Pacientes | `/` | Lista de pacientes con buscador (ícono de lupa) y aviso "Sin resultados" |
+| Splash | - | Huellas sobre fondo violeta que terminan en el logo de vetChiloé |
+| Pacientes | `/` | Logo en el encabezado, lista de pacientes con buscador (ícono de lupa) y aviso "Sin resultados" |
 | Ficha | `/paciente/[id]` | Foto, especie, edad, N° de atención y diagnóstico. Botón «Registrar visita» fijo abajo, en la zona del pulgar |
 | Visita en Terreno | `/visitas` | Pantalla provisoria: "Próximamente" |
 | Perfil | `/perfil` | Datos del veterinario o veterinaria |
@@ -82,7 +86,7 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 ```
 vetChiloe-terreno/
 ├── assets/
-│   └── images/                íconos de la app y splash-icon.png (huella)
+│   └── images/                logo, íconos de la app y splash-icon.png (huella)
 ├── src/
 │   ├── app/                   pantallas: cada archivo es una ruta
 │   │   ├── _layout.tsx        Stack raíz y splash de huellas
@@ -101,6 +105,7 @@ vetChiloe-terreno/
 │   │   └── tema.ts            tokens: colores, espacio, radios y tipografía
 │   └── data/
 │       └── pacientesMock.ts   pacientes de ejemplo
+├── docs/img/                  imágenes del README
 ├── guia-git/                  flujo de trabajo con Git
 ├── app.json                   identidad de la app
 ├── package.json

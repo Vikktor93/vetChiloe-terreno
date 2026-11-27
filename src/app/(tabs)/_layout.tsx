@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { ColorValue } from 'react-native';
+import { ColorValue, Image, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colores } from '@/constants/tema';
 
@@ -17,7 +17,28 @@ export default function TabsLayout() {
       headerTintColor: Colores.sobrePrimario,
       tabBarActiveTintColor: Colores.primario,
     }}>
-      <Tabs.Screen name="index" options={{ title: 'Pacientes', tabBarIcon: icono('paw') }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Pacientes',
+          tabBarIcon: icono('paw'),
+          // Logo de vetChiloé a la izquierda del título, sobre un círculo
+          // blanco para que el morado del logo contraste con el encabezado
+          headerLeft: () => (
+            <View style={{
+              width: 36, height: 36, borderRadius: 18, marginLeft: 16,
+              backgroundColor: Colores.sobrePrimario,
+              alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Image
+                source={require('@/assets/images/logo-isotipo.png')}
+                style={{ width: 26, height: 26 }}
+                accessibilityLabel="vetChiloé"
+              />
+            </View>
+          ),
+        }}
+      />
       <Tabs.Screen name="visitas" options={{ title: 'Visitas', tabBarIcon: icono('map') }} />
       <Tabs.Screen name="perfil" options={{ title: 'Perfil', tabBarIcon: icono('person') }} />
     </Tabs>
