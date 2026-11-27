@@ -67,6 +67,14 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 | `npx expo install <paquete>` | Instala una librería en la versión compatible con el SDK 58 (usar en vez de `npm install <paquete>`) |
 | `npm run reset-project` | Limpia la plantilla de ejemplo (Paso 1 de la guía, una sola vez y en tu rama) |
 
+## Interfaces
+
+<p align="center">
+  <img src="docs/img/demo.gif" width="280" alt="Recorrido por la app: splash con huellas y logo, buscador de pacientes, ficha de Mercedes y pestañas Visitas y Perfil">
+</p>
+
+<p align="center"><sub>Estado actual (Avance 03). Grabado en la versión web con el tamaño de un teléfono.</sub></p>
+
 ## ¿Qué hace la App Móvil hoy?
 
 | Pantalla | Ruta | Qué muestra |
@@ -105,7 +113,7 @@ vetChiloe-terreno/
 │   │   └── tema.ts            tokens: colores, espacio, radios y tipografía
 │   └── data/
 │       └── pacientesMock.ts   pacientes de ejemplo
-├── docs/img/                  imágenes del README
+├── docs/img/                  logo y GIF del README
 ├── guia-git/                  flujo de trabajo con Git
 ├── app.json                   identidad de la app
 ├── package.json
