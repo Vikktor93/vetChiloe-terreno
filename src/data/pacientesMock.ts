@@ -1,12 +1,8 @@
-export type Paciente = {
-  id: number;
-  nombre: string;
-  numero_atencion: string;
-  especie: string;
-  edad: number;
-  diagnostico: string;
-  foto: string; 
-};
+// Ya no lo usa ninguna pantalla: desde el Avance 04 los pacientes vienen de la API.
+// Se conserva como ejemplo de datos y para pruebas sin conexión.
+import type { Paciente } from '@/types/paciente';
+
+export type { Paciente };
 
 export const pacientesMock: Paciente[] = [
   { id: 1, nombre: 'Charkicito', numero_atencion: 'A-001', especie: 'Felino', edad: 8, diagnostico: 'Control anual', foto: 'https://images.unsplash.com/photo-1790172202932-95d8991d25a3?q=80&w=697&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D' },

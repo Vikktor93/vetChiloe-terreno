@@ -1,18 +1,49 @@
-import { Alert, ScrollView, View, Text, Image, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, View, Text, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import Boton from '@/components/Boton';
-import { pacientesMock } from '@/data/pacientesMock';
+import FotoPaciente from '@/components/FotoPaciente';
+import { obtenerPaciente } from '@/services/api';
+import { formatearEdad, type Paciente } from '@/types/paciente';
 import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 
 export default function FichaPaciente() {
   const insets = useSafeAreaInsets(); // los hooks van antes de cualquier return
   const { id } = useLocalSearchParams<{ id: string }>();
-  const paciente = pacientesMock.find((p) => p.id === Number(id));
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [intento, setIntento] = useState(0); // cambia para volver a pedir
+
+  useEffect(() => {
+    let activo = true; // evita actualizar la pantalla si el usuario ya volvió atrás
+    setError(null);
+    obtenerPaciente(id)
+      .then((p) => activo && setPaciente(p))
+      .catch((e: Error) => activo && setError(e.message));
+    return () => { activo = false; };
+  }, [id, intento]);
+
+  if (error) {
+    const noExiste = error.startsWith('Error 404');
+    return (
+      <View style={styles.centro}>
+        <Stack.Screen options={{ title: 'Ficha' }} />
+        <Text style={styles.vacio}>
+          {noExiste ? 'Paciente no encontrado' : 'No se pudo cargar la ficha. Revisa tu conexión.'}
+        </Text>
+        {!noExiste && <Boton titulo="Reintentar" icono="refresh" onPress={() => setIntento((n) => n + 1)} />}
+      </View>
+    );
+  }
 
   if (!paciente) {
-    return <Text style={styles.vacio}>Paciente no encontrado</Text>;
+    return (
+      <View style={styles.centro}>
+        <ActivityIndicator size="large" color={Colores.primario} />
+      </View>
+    );
   }
 
   function registrarVisita() {
@@ -25,17 +56,13 @@ export default function FichaPaciente() {
     <View style={styles.pantalla}>
       <Stack.Screen options={{ title: paciente.nombre }} />
       <ScrollView contentContainerStyle={styles.contenedor}>
-        <Image
-          source={{ uri: paciente.foto }}
-          style={styles.foto}
-          accessibilityLabel={`Foto de ${paciente.nombre}`}
-        />
+        <FotoPaciente uri={paciente.foto} nombre={paciente.nombre} style={styles.foto} tamanoIcono={72} />
         <Text style={styles.nombre} accessibilityRole="header">{paciente.nombre}</Text>
         {[
           ['Especie', paciente.especie],
-          ['Edad', `${paciente.edad} años`],
+          ['Edad', formatearEdad(paciente.edad)],
           ['N° de atención', paciente.numero_atencion],
-          ['Diagnóstico', paciente.diagnostico],
+          ['Diagnóstico', paciente.diagnostico ?? 'Sin diagnóstico'],
         ].map(([etiqueta, valor]) => (
           <View key={etiqueta} style={styles.fila} accessible accessibilityLabel={`${etiqueta}: ${valor}`}>
             <Text style={styles.etiqueta}>{etiqueta}</Text>
@@ -54,6 +81,10 @@ export default function FichaPaciente() {
 
 const styles = StyleSheet.create({
   pantalla: { flex: 1, backgroundColor: Colores.fondo },
+  centro: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+    gap: Espacio.m, padding: Espacio.l, backgroundColor: Colores.fondo,
+  },
   contenedor: { padding: Espacio.l, gap: Espacio.m },
   foto: { width: '100%', height: 260, borderRadius: Radio.l },
   nombre: { ...Tipografia.titulo, fontSize: 26, color: Colores.primario },

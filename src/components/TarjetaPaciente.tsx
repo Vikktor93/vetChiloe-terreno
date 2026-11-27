@@ -1,23 +1,25 @@
-import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import { Paciente } from '@/data/pacientesMock';
+import FotoPaciente from '@/components/FotoPaciente';
+import { formatearEdad, type Paciente } from '@/types/paciente';
 import { Colores, Espacio, Radio, Tipografia } from '@/constants/tema';
 
 type Props = { paciente: Paciente };
 
 export default function TarjetaPaciente({ paciente }: Props) {
+  const edad = formatearEdad(paciente.edad);
   return (
     // router.push en vez de <Link asChild>: Link reemplaza el «style» del Pressable
     // y se pierde la función ({ pressed }) => [...], así la tarjeta quedaría sin estilos.
     <Pressable
       onPress={() => router.push({ pathname: '/paciente/[id]', params: { id: paciente.id } })}
       accessibilityRole="button"
-      accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${paciente.edad} años`}
+      accessibilityLabel={`Ver ficha de ${paciente.nombre}, ${paciente.especie}, ${edad}`}
       style={({ pressed }) => [styles.tarjeta, pressed && styles.presionada]}>
-      <Image source={{ uri: paciente.foto }} style={styles.foto} />
+      <FotoPaciente uri={paciente.foto} nombre={paciente.nombre} style={styles.foto} />
       <View style={styles.info}>
         <Text style={styles.nombre}>{paciente.nombre}</Text>
-        <Text style={styles.detalle}>{paciente.especie} - {paciente.edad} años</Text>
+        <Text style={styles.detalle}>{paciente.especie} - {edad}</Text>
         <Text style={styles.atencion}>N° {paciente.numero_atencion}</Text>
       </View>
     </Pressable>

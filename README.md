@@ -32,6 +32,7 @@ flowchart LR
 | Íconos | `@expo/vector-icons` (Ionicons) |
 | Sistema de diseño | Tokens en `src/constants/tema.ts` y componente `Boton` |
 | Respuesta táctil | `expo-haptics` |
+| Datos | API REST de vetChiloé en Render (`EXPO_PUBLIC_API_URL` en `.env`) |
 | Pruebas en el teléfono | Expo Go (SDK 58) |
 
 ## Requisitos
@@ -80,16 +81,16 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 | Pantalla | Ruta | Qué muestra |
 |---|---|---|
 | Splash | - | Huellas sobre fondo violeta que terminan en el logo de vetChiloé |
-| Pacientes | `/` | Logo en el encabezado, lista de pacientes con buscador (ícono de lupa) y aviso "Sin resultados" |
-| Ficha | `/paciente/[id]` | Foto, especie, edad, N° de atención y diagnóstico. Botón «Registrar visita» fijo abajo, en la zona del pulgar |
+| Pacientes | `/` | Pacientes reales desde `GET /api/pacientes`, con buscador, estados de carga y error (botón Reintentar) y deslizar para actualizar |
+| Ficha | `/paciente/[id]` | Paciente desde `GET /api/pacientes/:id`: foto (o huella si no tiene), especie, edad, N° de atención y diagnóstico. Botón «Registrar visita» fijo abajo |
 | Visita en Terreno | `/visitas` | Pantalla provisoria: "Próximamente" |
 | Perfil | `/perfil` | Datos del veterinario o veterinaria |
 
-> Los pacientes todavía vienen de `src/data/pacientesMock.ts`. En el Avance 04 se cargan desde la API.
+> Los pacientes son los mismos que muestra [vetChiloé web](https://vet-chiloe-navy.vercel.app/). La API está en el plan gratuito de Render: si estuvo inactiva, la primera carga puede tardar cerca de un minuto.
 
 ## Estructura
 
-#### **Última actualización: 27 de noviembre (Avance 03)**
+#### **Última actualización: 27 de noviembre (Avance 04)**
 
 ```
 vetChiloe-terreno/
@@ -116,12 +117,20 @@ vetChiloe-terreno/
 │   │       └── [id].tsx           ficha del paciente (ruta dinámica)
 │   ├── components/                componentes reutilizables
 │   │   ├── Boton.tsx              botón con ícono, variantes y estados
+│   │   ├── FotoPaciente.tsx       foto o huella si el paciente no tiene
 │   │   ├── TarjetaPaciente.tsx    tarjeta de la lista
 │   │   └── SplashHuellas.tsx      animación de huellas y logo
 │   ├── constants/
 │   │   └── tema.ts                tokens: colores, espacio, radios y tipografía
-│   └── data/
-│       └── pacientesMock.ts       pacientes de ejemplo
+│   ├── data/
+│   │   └── pacientesMock.ts       pacientes de ejemplo (ya no los usa ninguna pantalla)
+│   ├── hooks/
+│   │   └── usePacientes.ts        carga, error y recarga de la lista
+│   ├── services/
+│   │   └── api.ts                 peticiones a la API de Render
+│   └── types/
+│       └── paciente.ts            tipo Paciente y formato de la edad
+├── .env                           URL pública de la API (EXPO_PUBLIC_API_URL)
 ├── app.json                       identidad de la app
 ├── package.json
 └── tsconfig.json                  TypeScript (el atajo @/ apunta a src/)
@@ -138,8 +147,8 @@ Un módulo nuevo por tópico de la unidad:
 | 01 - Arquitectura RN y Expo | Proyecto base y pantalla de inicio con pacientes | 🟢 `avance-01` |
 | 02 - Componentes, estilos y navegación | Pestañas, buscador y ficha del paciente | 🟢 `avance-02` |
 | 03 - Ergonomía móvil y sistemas de diseño | Tema centralizado, componente `Boton` y acción "Registrar visita" | 🟢 `avance-03` |
-| 04 - APIs REST y estado asíncrono | Pacientes desde la API de Render, con estados de carga y error | 🟡 Siguiente |
-| 05 - Persistencia NoSQL y BaaS | Registro e historial de visitas a predios (MongoDB o Firebase) | ⚪ |
+| 04 - APIs REST y estado asíncrono | Pacientes desde la API de Render, con estados de carga y error | 🟢 `avance-04` |
+| 05 - Persistencia NoSQL y BaaS | Registro e historial de visitas a predios (MongoDB o Firebase) | 🟡 Siguiente |
 | 06 - Almacenamiento local y offline | Guardar sin señal y sincronizar después | ⚪ |
 | 07 - Hardware y sensores | Cámara para la foto y GPS del predio | ⚪ |
 | 08 - Seguridad y rendimiento | Inicio de sesión y listas fluidas | ⚪ |
