@@ -92,112 +92,42 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 #### **Última actualización: 27 de noviembre (Avance 03)**
 
 ```
-└── 📁vetchiloe-terreno
-    └── 📁.claude
-    └── 📁.expo
-        └── 📁types
-            ├── router.d.ts
-        ├── devices.json
-        ├── README.md
-    └── 📁.vscode
-        ├── extensions.json
-        ├── settings.json
-    └── 📁assets
-        └── 📁expo.icon
-            └── 📁Assets
-                ├── expo-symbol 2.svg
-                ├── grid.png
-            ├── icon.json
-        └── 📁images
-            ├── android-icon-background.png
-            ├── android-icon-foreground.png
-            ├── android-icon-monochrome.png
-            ├── favicon.png
-            ├── icon.png
-            ├── logo-isotipo.png
-            ├── logo.png
-            ├── splash-icon.png
-    └── 📁docs
-        └── 📁img
-            ├── demo.gif
-            ├── logo-readme.png
-    └── 📁example
-        └── 📁assets
-            └── 📁images
-                └── 📁tabIcons
-                    ├── explore.png
-                    ├── explore@2x.png
-                    ├── explore@3x.png
-                    ├── home.png
-                    ├── home@2x.png
-                    ├── home@3x.png
-                ├── expo-badge-white.png
-                ├── expo-badge.png
-                ├── expo-logo.png
-                ├── logo-glow.png
-                ├── react-logo.png
-                ├── react-logo@2x.png
-                ├── react-logo@3x.png
-                ├── tutorial-web.png
-        └── 📁scripts
-            ├── reset-project.js
-        └── 📁src
-            └── 📁app
-                ├── _layout.tsx
-                ├── explore.tsx
-                ├── index.tsx
-            └── 📁components
-                └── 📁ui
-                    ├── collapsible.tsx
-                ├── animated-icon.module.css
-                ├── animated-icon.tsx
-                ├── animated-icon.web.tsx
-                ├── app-tabs.tsx
-                ├── app-tabs.web.tsx
-                ├── external-link.tsx
-                ├── hint-row.tsx
-                ├── themed-text.tsx
-                ├── themed-view.tsx
-                ├── web-badge.tsx
-            └── 📁constants
-                ├── theme.ts
-            └── 📁hooks
-                ├── use-color-scheme.ts
-                ├── use-color-scheme.web.ts
-                ├── use-theme.ts
-            ├── global.css
-    └── 📁guia-git
-        ├── flujo-docente.md
-        ├── flujo-estudiante.md
-        ├── problemas-frecuentes.md
-        ├── README.md
-    └── 📁src
-        └── 📁app
-            └── 📁(tabs)
-                ├── _layout.tsx
-                ├── index.tsx
-                ├── perfil.tsx
-                ├── visitas.tsx
-            └── 📁paciente
-                ├── [id].tsx
-            ├── _layout.tsx
-        └── 📁components
-            ├── Boton.tsx
-            ├── SplashHuellas.tsx
-            ├── TarjetaPaciente.tsx
-        └── 📁constants
-            ├── tema.ts
-        └── 📁data
-            ├── pacientesMock.ts
-    ├── .gitignore
-    ├── app.json
-    ├── expo-env.d.ts
-    ├── LICENSE
-    ├── package-lock.json
-    ├── package.json
-    ├── README.md
-    └── tsconfig.json
+vetChiloe-terreno/
+├── assets/
+│   └── images/
+│       ├── logo.png               logo completo (splash y README)
+│       ├── logo-isotipo.png       cruz con huella (encabezado)
+│       ├── icon.png               ícono de la app
+│       ├── android-icon-*.png     ícono adaptativo de Android
+│       ├── splash-icon.png        huella del splash nativo
+│       └── favicon.png            ícono de la versión web
+├── docs/
+│   └── img/                       logo y GIF del README
+├── guia-git/                      flujo de trabajo con Git
+├── src/
+│   ├── app/                       pantallas: cada archivo es una ruta
+│   │   ├── _layout.tsx            Stack raíz y splash de huellas
+│   │   ├── (tabs)/                pestañas inferiores
+│   │   │   ├── _layout.tsx        Pacientes · Visitas · Perfil
+│   │   │   ├── index.tsx          lista de pacientes con buscador
+│   │   │   ├── visitas.tsx        Visita en Terreno (próximamente)
+│   │   │   └── perfil.tsx         perfil del veterinario/a
+│   │   └── paciente/
+│   │       └── [id].tsx           ficha del paciente (ruta dinámica)
+│   ├── components/                componentes reutilizables
+│   │   ├── Boton.tsx              botón con ícono, variantes y estados
+│   │   ├── TarjetaPaciente.tsx    tarjeta de la lista
+│   │   └── SplashHuellas.tsx      animación de huellas y logo
+│   ├── constants/
+│   │   └── tema.ts                tokens: colores, espacio, radios y tipografía
+│   └── data/
+│       └── pacientesMock.ts       pacientes de ejemplo
+├── app.json                       identidad de la app
+├── package.json
+└── tsconfig.json                  TypeScript (el atajo @/ apunta a src/)
 ```
+
+> `node_modules/`, `.expo/`, `example/` y `.claude/` existen solo en tu computador: están en el `.gitignore` y no se suben al repositorio.
 
 ## Hoja de ruta
 
