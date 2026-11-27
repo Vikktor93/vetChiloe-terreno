@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 import SplashHuellas from '@/components/SplashHuellas';
 
 export default function RootLayout() {
@@ -16,7 +16,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: Colores.primario },
-          headerTintColor: '#fff',
+          headerTintColor: Colores.sobrePrimario,
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="paciente/[id]" options={{ title: 'Ficha' }} />

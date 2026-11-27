@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 
 // Posición de cada huella: forman un camino en diagonal, como pasos de una mascota.
 const HUELLAS = [
@@ -52,7 +52,7 @@ export default function SplashHuellas({ alTerminar }: Props) {
                 ],
               },
             ]}>
-            <Ionicons name="paw" size={56} color="#fff" />
+            <Ionicons name="paw" size={56} color={Colores.sobrePrimario} />
           </Animated.View>
         ))}
       </View>

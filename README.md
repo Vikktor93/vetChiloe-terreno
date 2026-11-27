@@ -26,6 +26,8 @@ flowchart LR
 | Lenguaje | TypeScript |
 | Navegación | Expo Router: pestañas (`Tabs`) y pila de pantallas (`Stack`) |
 | Íconos | `@expo/vector-icons` (Ionicons) |
+| Sistema de diseño | Tokens en `src/constants/tema.ts` y componente `Boton` |
+| Respuesta táctil | `expo-haptics` |
 | Pruebas en el teléfono | Expo Go (SDK 58) |
 
 ## Requisitos
@@ -66,8 +68,8 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 | Pantalla | Ruta | Qué muestra |
 |---|---|---|
 | Splash | - | Huellas sobre fondo violeta mientras la app abre |
-| Pacientes | `/` | Lista de pacientes con buscador por nombre y aviso "Sin resultados" |
-| Ficha | `/paciente/[id]` | Foto, especie, edad, N° de atención y diagnóstico del paciente |
+| Pacientes | `/` | Lista de pacientes con buscador (ícono de lupa) y aviso "Sin resultados" |
+| Ficha | `/paciente/[id]` | Foto, especie, edad, N° de atención y diagnóstico. Botón «Registrar visita» fijo abajo, en la zona del pulgar |
 | Visita en Terreno | `/visitas` | Pantalla provisoria: "Próximamente" |
 | Perfil | `/perfil` | Datos del veterinario o veterinaria |
 
@@ -75,7 +77,7 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 
 ## Estructura
 
-#### **Última actualización: 27 de noviembre (Avance 02)**
+#### **Última actualización: 27 de noviembre (Avance 03)**
 
 ```
 vetChiloe-terreno/
@@ -92,10 +94,11 @@ vetChiloe-terreno/
 │   │   └── paciente/
 │   │       └── [id].tsx       ficha del paciente (ruta dinámica)
 │   ├── components/            componentes reutilizables
+│   │   ├── Boton.tsx          botón con ícono opcional, variantes y estados
 │   │   ├── TarjetaPaciente.tsx
 │   │   └── SplashHuellas.tsx
 │   ├── constants/
-│   │   └── colores.ts         paleta de la app
+│   │   └── tema.ts            tokens: colores, espacio, radios y tipografía
 │   └── data/
 │       └── pacientesMock.ts   pacientes de ejemplo
 ├── guia-git/                  flujo de trabajo con Git
@@ -112,8 +115,8 @@ Un módulo nuevo por tópico de la unidad:
 |---|---|---|
 | 01 - Arquitectura RN y Expo | Proyecto base y pantalla de inicio con pacientes | 🟢 `avance-01` |
 | 02 - Componentes, estilos y navegación | Pestañas, buscador y ficha del paciente | 🟢 `avance-02` |
-| 03 - Ergonomía móvil y sistemas de diseño | Tema centralizado, componente `Boton` y acción "Registrar visita" | 🟡 En curso |
-| 04 - APIs REST y estado asíncrono | Pacientes desde la API de Render, con estados de carga y error | ⚪ |
+| 03 - Ergonomía móvil y sistemas de diseño | Tema centralizado, componente `Boton` y acción "Registrar visita" | 🟢 `avance-03` |
+| 04 - APIs REST y estado asíncrono | Pacientes desde la API de Render, con estados de carga y error | 🟡 Siguiente |
 | 05 - Persistencia NoSQL y BaaS | Registro e historial de visitas a predios (MongoDB o Firebase) | ⚪ |
 | 06 - Almacenamiento local y offline | Guardar sin señal y sincronizar después | ⚪ |
 | 07 - Hardware y sensores | Cámara para la foto y GPS del predio | ⚪ |

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Colores } from '@/constants/colores';
+import { Colores, Espacio, Tipografia } from '@/constants/tema';
 
 export default function Visitas() {
   return (
@@ -13,7 +13,7 @@ export default function Visitas() {
 }
 
 const styles = StyleSheet.create({
-  contenedor: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: Colores.fondo },
-  titulo: { fontSize: 20, fontWeight: 'bold', color: Colores.texto },
-  texto: { color: Colores.textoSecundario },
+  contenedor: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Espacio.s, backgroundColor: Colores.fondo },
+  titulo: { ...Tipografia.titulo, color: Colores.texto },
+  texto: { ...Tipografia.cuerpo, color: Colores.textoSecundario },
 });

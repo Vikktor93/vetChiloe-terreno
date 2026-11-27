@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { ColorValue } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Colores } from '@/constants/colores';
+import { Colores } from '@/constants/tema';
 
 type Icono = keyof typeof Ionicons.glyphMap;
 
@@ -14,7 +14,7 @@ export default function TabsLayout() {
   return (
     <Tabs screenOptions={{
       headerStyle: { backgroundColor: Colores.primario },
-      headerTintColor: '#fff',
+      headerTintColor: Colores.sobrePrimario,
       tabBarActiveTintColor: Colores.primario,
     }}>
       <Tabs.Screen name="index" options={{ title: 'Pacientes', tabBarIcon: icono('paw') }} />
