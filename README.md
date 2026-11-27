@@ -1,4 +1,4 @@
-# App Móvil: vetChiloé en Terreno 
+# App Móvil: vetChiloé en Terreno
 
 **La clínica, ahora en terreno**
 
@@ -24,21 +24,22 @@ flowchart LR
 | Framework | [Expo](https://expo.dev) **SDK 58** |
 | Base | React Native 0.88 (Nueva Arquitectura) · React 19 |
 | Lenguaje | TypeScript |
-| Navegación | Expo Router (rutas basadas en archivos) |
+| Navegación | Expo Router: pestañas (`Tabs`) y pila de pantallas (`Stack`) |
+| Íconos | `@expo/vector-icons` (Ionicons) |
 | Pruebas en el teléfono | Expo Go (SDK 58) |
 
 ## Requisitos
 
 - **Node.js** 22.13+, 24.3+ o 26+ (solo versiones pares). Revisa con `node -v`.
 - **Git** y una cuenta de **GitHub** con la invitación al repositorio aceptada.
-- **Expo Go** en tu teléfono ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iOS](https://apps.apple.com/app/expo-go/id982107779)).
+- **Expo Go** en tu teléfono ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) - [iOS](https://apps.apple.com/app/expo-go/id982107779)).
 - Computador y teléfono en la **misma red Wi-Fi**.
 
 ## Inicio rápido
 
 ```bash
-git clone https://github.com/Vikktor93/vetchiloe-terreno.git
-cd vetchiloe-terreno
+git clone https://github.com/Vikktor93/vetChiloe-terreno.git
+cd vetChiloe-terreno
 npm install
 git checkout -b estudiante/nombre-apellido
 npx expo start
@@ -60,20 +61,41 @@ Escanea el código QR con **Expo Go** (Android) o con la **cámara** (iOS).
 | `npx expo install <paquete>` | Instala una librería en la versión compatible con el SDK 58 (usar en vez de `npm install <paquete>`) |
 | `npm run reset-project` | Limpia la plantilla de ejemplo (Paso 1 de la guía, una sola vez y en tu rama) |
 
+## ¿Qué hace la App Móvil hoy?
+
+| Pantalla | Ruta | Qué muestra |
+|---|---|---|
+| Splash | - | Huellas sobre fondo violeta mientras la app abre |
+| Pacientes | `/` | Lista de pacientes con buscador por nombre y aviso "Sin resultados" |
+| Ficha | `/paciente/[id]` | Foto, especie, edad, N° de atención y diagnóstico del paciente |
+| Visita en Terreno | `/visitas` | Pantalla provisoria: "Próximamente" |
+| Perfil | `/perfil` | Datos del veterinario o veterinaria |
+
+> Los pacientes todavía vienen de `src/data/pacientesMock.ts`. En el Avance 04 se cargan desde la API.
+
 ## Estructura
 
-#### **Última Actualización: (09 de Noviembre)**
-A continuación se muestra la estructura del proyecto después del Avance 01:
+#### **Última actualización: 27 de noviembre (Avance 02)**
 
 ```
-vetchiloe-terreno/
-├── assets/                    imágenes e íconos
+vetChiloe-terreno/
+├── assets/
+│   └── images/                íconos de la app y splash-icon.png (huella)
 ├── src/
-│   ├── app/                   pantallas (cada archivo es una ruta)
-│   │   ├── _layout.tsx        navegación y encabezado
-│   │   └── index.tsx          pantalla de inicio
+│   ├── app/                   pantallas: cada archivo es una ruta
+│   │   ├── _layout.tsx        Stack raíz y splash de huellas
+│   │   ├── (tabs)/            pestañas inferiores
+│   │   │   ├── _layout.tsx    Pacientes · Visitas · Perfil
+│   │   │   ├── index.tsx      lista de pacientes con buscador
+│   │   │   ├── visitas.tsx    Visita en Terreno (próximamente)
+│   │   │   └── perfil.tsx     perfil del veterinario/a
+│   │   └── paciente/
+│   │       └── [id].tsx       ficha del paciente (ruta dinámica)
 │   ├── components/            componentes reutilizables
-│   │   └── TarjetaPaciente.tsx
+│   │   ├── TarjetaPaciente.tsx
+│   │   └── SplashHuellas.tsx
+│   ├── constants/
+│   │   └── colores.ts         paleta de la app
 │   └── data/
 │       └── pacientesMock.ts   pacientes de ejemplo
 ├── guia-git/                  flujo de trabajo con Git
@@ -88,21 +110,23 @@ Un módulo nuevo por tópico de la unidad:
 
 | Tópico | Módulo en la app | Estado |
 |---|---|---|
-| 01 - Arquitectura RN y Expo | Proyecto base y pantalla de inicio con pacientes | 🟢 Avance 01 |
-| 02 - Componentes, estilos y navegación |  | ⚪ |
-| 03 - Ergonomía móvil y sistemas de diseño |  | ⚪ |
-| 04 - APIs REST y estado asíncrono |  | ⚪ |
-| 05 - Persistencia NoSQL y BaaS |  | ⚪ |
-| 06 - Almacenamiento local y offline |  | ⚪ |
-| 07 - Hardware y sensores |  | ⚪ |
-| 08 - Seguridad y rendimiento |  | ⚪ |
-| 09 - Compilación y EAS |  | ⚪ |
+| 01 - Arquitectura RN y Expo | Proyecto base y pantalla de inicio con pacientes | 🟢 `avance-01` |
+| 02 - Componentes, estilos y navegación | Pestañas, buscador y ficha del paciente | 🟢 `avance-02` |
+| 03 - Ergonomía móvil y sistemas de diseño | Tema centralizado, componente `Boton` y acción "Registrar visita" | 🟡 En curso |
+| 04 - APIs REST y estado asíncrono | Pacientes desde la API de Render, con estados de carga y error | ⚪ |
+| 05 - Persistencia NoSQL y BaaS | Registro e historial de visitas a predios (MongoDB o Firebase) | ⚪ |
+| 06 - Almacenamiento local y offline | Guardar sin señal y sincronizar después | ⚪ |
+| 07 - Hardware y sensores | Cámara para la foto y GPS del predio | ⚪ |
+| 08 - Seguridad y rendimiento | Inicio de sesión y listas fluidas | ⚪ |
+| 09 - Compilación y EAS | APK instalable | ⚪ |
+
+> La solución de cada avance queda en la rama `docente/solucion` y en su etiqueta (`avance-01`, `avance-02`…), que se publica al cerrar el plazo.
 
 ## Historias de usuario
 
 > 📝 **Avance 01:** cada estudiante reemplaza esta sección, **en su rama**, por sus 3 historias de usuario.
 
-**Formato: *Como veterinario/a en terreno, quiero … para …*
+**Formato:** *Como veterinario/a en terreno, quiero … para …*
 
 1. Como veterinario/a en terreno, quiero …, para …
 2. Como veterinario/a en terreno, quiero …, para …
@@ -118,5 +142,5 @@ Un módulo nuevo por tópico de la unidad:
 ---
 ## Créditos
 
-**Asignatura:** Tecnología Web y Móvil, Ingeniería Civil en Informática  
+**Asignatura:** Tecnología Web y Móvil y Bases de Datos Avanzadas, Ingeniería Civil en Informática  
 **Docente y Desarrollador Principal:** Victor Saldivia Vera - victor.saldivia@ulagos.cl
