@@ -9,7 +9,7 @@ export default function Perfil() {
         <Ionicons name="person" size={48} color="#fff" />
       </View>
       <Text style={styles.nombre}>Victor Saldivia Vera</Text>
-      <Text style={styles.texto}>Médico/a veterinario/a · Terreno</Text>
+      <Text style={styles.texto}>Médico/a veterinario/a</Text>
     </View>
   );
 }
